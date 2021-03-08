@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Home from "./components/Home";
 import ListView from "./components/ListView";
 
-function App() {
+function App(): JSX.Element {
   return (
     <BrowserRouter>
       <Switch>
