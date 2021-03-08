@@ -2,26 +2,40 @@ import React, { useState } from "react";
 import style from "./Home.module.scss";
 import ReactModal from "react-modal";
 
-const ListView: React.FC = () => {
+const ListView: React.FC = (): JSX.Element => {
   const [modal, setModal] = useState<boolean>(false);
+  const [title, setTitle] = useState<string | number>("");
 
-  const handleOpen = () => {
-    setModal(true);
-    console.log("true");
+  const modalAction = () => {
+    setModal(!modal);
   };
 
-  const handleClose = () => {
-    setModal(false);
-    console.log("false");
+  const titleHolder = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(title);
+  };
+
+  const handleClick = () => {
+    setModal(!modal);
   };
 
   return (
     <div>
-      <button className={style.btn} onClick={modal ? handleClose : handleOpen}>
+      <button className={style.btn} onClick={modalAction}>
         リストを作成
       </button>
       <ReactModal isOpen={modal} className={style.modal}>
-        <button onClick={handleClose} className={style.btn}>
+        <form onSubmit={titleHolder}>
+          <input
+            placeholder="タイトルを入力してください"
+            type="text"
+            onChange={(e) => setTitle(e.target.value)}
+          ></input>
+        </form>
+        <button className={style.btn} onClick={handleClick}>
+          作成
+        </button>
+        <button onClick={modalAction} className={style.secondaryBtn}>
           閉じる
         </button>
       </ReactModal>
