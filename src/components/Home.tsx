@@ -15,11 +15,19 @@ import {
   Input,
   ModalFooter,
 } from "@chakra-ui/react";
+import Card from "./Card";
+
+interface Contents {
+  title: string | number;
+  contents: string | number | undefined;
+}
 
 const Home: React.FC = (): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [title, setTitle] = useState<string | number>("");
-  const [planContents, setPlanContents] = useState<string>("");
+  const [planContents, setPlanContents] = useState<Contents>({
+    title: "",
+    contents: "",
+  });
 
   return (
     <div className={style.container}>
@@ -27,7 +35,7 @@ const Home: React.FC = (): JSX.Element => {
         Plan a <span>solo</span> trip
       </h1>
       <button className={style.btn} onClick={onOpen}>
-        リストを作成
+        プランを作成
       </button>
       <ChakraProvider>
         <Modal isOpen={isOpen} onClose={onClose} size="5xl">
@@ -40,14 +48,24 @@ const Home: React.FC = (): JSX.Element => {
                   <FormLabel>名前</FormLabel>
                   <Input
                     placeholder="タイトル"
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) =>
+                      setPlanContents({
+                        ...planContents,
+                        title: e.target.value,
+                      })
+                    }
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel>概要</FormLabel>
                   <Input
                     placeholder="旅行内容を入力"
-                    onChange={(e) => setPlanContents(e.target.value)}
+                    onChange={(e) =>
+                      setPlanContents({
+                        ...planContents,
+                        contents: e.target.value,
+                      })
+                    }
                   />
                 </FormControl>
               </ModalBody>
@@ -61,7 +79,9 @@ const Home: React.FC = (): JSX.Element => {
           </ModalOverlay>
         </Modal>
       </ChakraProvider>
-      <div className={style.wrapper}></div>
+      <div className={style.wrapper}>
+        <Card title={planContents.title} contents={planContents.contents} />
+      </div>
     </div>
   );
 };

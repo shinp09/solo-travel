@@ -1,0 +1,9 @@
+.card {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: left;
+  background-color: #ffffff;
+  p {
+    overflow-wrap: break-word;
+  }
+}
