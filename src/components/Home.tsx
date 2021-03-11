@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import style from "./Home.module.scss";
+import "firebase/firestore";
+import { db } from "../firebase";
 import {
   Button,
   ChakraProvider,
@@ -28,6 +30,29 @@ const Home: React.FC = (): JSX.Element => {
     title: "",
     contents: "",
   });
+
+  const handleClick = () => {
+    db.collection("test")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+        });
+      });
+    const docId = Math.random().toString(32).substring(2);
+    const docRef = db.collection("test").doc("uDq0CjixdVP8uQc2yuU7");
+    docRef
+      .set({
+        title: planContents.title,
+        contents: planContents.contents,
+      })
+      .then(function () {
+        console.log("成功");
+      })
+      .catch(function (err) {
+        console.log("error");
+      });
+  };
 
   return (
     <div className={style.container}>
@@ -70,7 +95,7 @@ const Home: React.FC = (): JSX.Element => {
                 </FormControl>
               </ModalBody>
               <ModalFooter>
-                <Button colorScheme="pink" mr={4}>
+                <Button colorScheme="pink" mr={4} onClick={handleClick}>
                   保存
                 </Button>
                 <Button onClick={onClose}>キャンセル</Button>
