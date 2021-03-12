@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
 import { db } from "../firebase";
@@ -31,23 +31,18 @@ const Home: React.FC = (): JSX.Element => {
     contents: "",
   });
 
+  // 入力されたデータをfirebaseに保存
   const handleClick = () => {
-    db.collection("test")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          console.log(doc.data());
-        });
-      });
     const docId = Math.random().toString(32).substring(2);
-    const docRef = db.collection("test").doc("uDq0CjixdVP8uQc2yuU7");
+    const docRef = db.collection("plan").doc(docId);
     docRef
       .set({
         title: planContents.title,
         contents: planContents.contents,
       })
       .then(function () {
-        console.log("成功");
+        console.log("OK");
+        onClose();
       })
       .catch(function (err) {
         console.log("error");
@@ -105,7 +100,8 @@ const Home: React.FC = (): JSX.Element => {
         </Modal>
       </ChakraProvider>
       <div className={style.wrapper}>
-        <Card title={planContents.title} contents={planContents.contents} />
+        <Card /*title={planContents.title} contents={planContents.contents} */
+        />
       </div>
     </div>
   );
