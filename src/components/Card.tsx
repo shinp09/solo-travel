@@ -1,6 +1,26 @@
 import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
+import {
+  Box,
+  Wrap,
+  WrapItem,
+  Center,
+  Image,
+  Button,
+  ChakraProvider,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  FormControl,
+  FormLabel,
+  Input,
+  ModalFooter,
+} from "@chakra-ui/react";
 
 interface PROPS {
   title: string | number;
@@ -15,6 +35,8 @@ const Card: React.FC<PROPS> = (props) => {
       contents: "",
     },
   ]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
   useEffect(() => {
@@ -31,14 +53,30 @@ const Card: React.FC<PROPS> = (props) => {
   }, [props.title]);
 
   return (
-    <div className={style.card}>
-      {plans.map((plan) => (
-        <div key={plan.id}>
-          <h2>{plan.title}</h2>
-          <br />
-          <h2>{plan.contents}</h2>
-        </div>
-      ))}
+    <div className={style.conteiner}>
+      <Wrap>
+        <WrapItem onClick={onOpen} cursor="pointer">
+          {plans.map((plan) => (
+            <div key={plan.id} className={style.card}>
+              <Box maxW="sm" borderWidth="1px" borderRadius="xl">
+                <Image
+                  width="200px"
+                  height="150px"
+                  src="https://bit.ly/2Z4KKcF"
+                  alt="Rear view of modern home with pool"
+                  p="10px"
+                />
+                <Center w="100%" h="30px">
+                  <h2>{plan.title}</h2>
+                </Center>
+                <Center w="100%" h="30px">
+                  <h2>{plan.contents}</h2>
+                </Center>
+              </Box>
+            </div>
+          ))}
+        </WrapItem>
+      </Wrap>
     </div>
   );
 };

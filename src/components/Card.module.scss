@@ -1,9 +1,12 @@
-.card {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: left;
-  background-color: #ffffff;
-  p {
-    overflow-wrap: break-word;
+.conteiner {
+  .card {
+    padding: 10px;
+    div {
+      margin: 0;
+      padding: 0;
+    }
+    h2 {
+      overflow-wrap: break-word;
+    }
   }
 }

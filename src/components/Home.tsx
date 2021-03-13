@@ -39,29 +39,6 @@ const Home: React.FC = (): JSX.Element => {
 
   // firebase.storageへの保存方法を記述
   const sendPlan = () => {
-    // console.log("起動");
-    // if (planImage) {
-    //   const S =
-    //     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    //   const N = 16;
-    //   const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
-    //     .map((n) => S[n % S.length])
-    //     .join("");
-    //   // filenameをランダムな文字で定義
-    //   const fileName = randomChar + "_" + planImage.name;
-
-    //   // firestrageへ画像をアップ
-    //   const uploadPlanImg = storage.ref(`images/${fileName}`).put(planImage);
-    //   uploadPlanImg.on(
-    //     firebase.storage.TaskEvent.STATE_CHANGED,
-    //     // uploadの進捗を管理
-    //     () => {},
-    //     // errorのハンドリング
-    //     (err) => {
-    //       alert(err.message);
-    //     }
-    //   );
-    // } else {
     const docId = Math.random().toString(32).substring(2);
     const docRef = db.collection("plan").doc(docId);
     docRef
@@ -128,6 +105,7 @@ const Home: React.FC = (): JSX.Element => {
                     />
                   </FormControl>
                   <label>
+                    <GrCamera />
                     <input type="file" onChange={onChangeImageHandler} />
                   </label>
                 </ModalBody>
