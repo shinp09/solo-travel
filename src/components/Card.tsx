@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
 
-// interface PROPS {
-//   title: string | number;
-//   contents: string | number | undefined;
-// }
+interface PROPS {
+  title: string | number;
+  contents?: string | number;
+}
 
-const Card: React.FC = (): JSX.Element => {
-  const [plans, setPlans] = useState([{ id: "", title: "", contents: "" }]);
+const Card: React.FC<PROPS> = (props) => {
+  const [plans, setPlans] = useState([
+    {
+      id: "",
+      title: "",
+      contents: "",
+    },
+  ]);
 
-  // 現在は　再レンダリングされたら処理を行うから値が保存されたら処理を走らせる
+  // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
   useEffect(() => {
-    // データベースにあるtasksの中身を取得
     const unSub = db.collection("plan").onSnapshot((snapshot) => {
       setPlans(
         snapshot.docs.map((doc) => ({
@@ -22,9 +27,8 @@ const Card: React.FC = (): JSX.Element => {
         }))
       );
     });
-    // 再レンダリングされた時実行される関数
     return () => unSub();
-  }, []);
+  }, [props.title]);
 
   return (
     <div className={style.card}>
