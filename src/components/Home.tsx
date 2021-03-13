@@ -21,32 +21,37 @@ import Card from "./Card";
 
 interface Contents {
   title: string | number;
-  contents: string | number | undefined;
+  contents?: string | number;
 }
 
 const Home: React.FC = (): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [planContents, setPlanContents] = useState<Contents>({
+  const [posts, setPosts] = useState<Contents>({
     title: "",
     contents: "",
   });
 
   // 入力されたデータをfirebaseに保存
+  // titleからの場合、alertを表示
   const handleClick = () => {
-    const docId = Math.random().toString(32).substring(2);
-    const docRef = db.collection("plan").doc(docId);
-    docRef
-      .set({
-        title: planContents.title,
-        contents: planContents.contents,
-      })
-      .then(function () {
-        console.log("OK");
-        onClose();
-      })
-      .catch(function (err) {
-        console.log("error");
-      });
+    if (posts.title) {
+      const docId = Math.random().toString(32).substring(2);
+      const docRef = db.collection("plan").doc(docId);
+      docRef
+        .set({
+          title: posts.title,
+          contents: posts.contents,
+        })
+        .then(function () {
+          console.log("OK");
+          onClose();
+        })
+        .catch(function (err) {
+          console.log("error");
+        });
+    } else {
+      alert("titleを入力してください");
+    }
   };
 
   return (
@@ -69,8 +74,8 @@ const Home: React.FC = (): JSX.Element => {
                   <Input
                     placeholder="タイトル"
                     onChange={(e) =>
-                      setPlanContents({
-                        ...planContents,
+                      setPosts({
+                        ...posts,
                         title: e.target.value,
                       })
                     }
@@ -81,8 +86,8 @@ const Home: React.FC = (): JSX.Element => {
                   <Input
                     placeholder="旅行内容を入力"
                     onChange={(e) =>
-                      setPlanContents({
-                        ...planContents,
+                      setPosts({
+                        ...posts,
                         contents: e.target.value,
                       })
                     }
@@ -100,8 +105,7 @@ const Home: React.FC = (): JSX.Element => {
         </Modal>
       </ChakraProvider>
       <div className={style.wrapper}>
-        <Card /*title={planContents.title} contents={planContents.contents} */
-        />
+        <Card title={posts.title} contents={posts.contents} />
       </div>
     </div>
   );
