@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
-import { db } from "../firebase";
+import firebase from "firebase/app";
+import { db, storage } from "../firebase";
 import {
   Button,
   ChakraProvider,
@@ -17,6 +18,7 @@ import {
   Input,
   ModalFooter,
 } from "@chakra-ui/react";
+import { GrCamera } from "react-icons/gr";
 import Card from "./Card";
 
 interface Contents {
@@ -30,27 +32,58 @@ const Home: React.FC = (): JSX.Element => {
     title: "",
     contents: "",
   });
+  const [planImage, setPlanImage] = useState<File | null>(null);
 
   // 入力されたデータをfirebaseに保存
   // titleからの場合、alertを表示
-  const handleClick = () => {
-    if (posts.title) {
-      const docId = Math.random().toString(32).substring(2);
-      const docRef = db.collection("plan").doc(docId);
-      docRef
-        .set({
-          title: posts.title,
-          contents: posts.contents,
-        })
-        .then(function () {
-          console.log("OK");
-          onClose();
-        })
-        .catch(function (err) {
-          console.log("error");
-        });
-    } else {
-      alert("titleを入力してください");
+
+  // firebase.storageへの保存方法を記述
+  const sendPlan = () => {
+    // console.log("起動");
+    // if (planImage) {
+    //   const S =
+    //     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    //   const N = 16;
+    //   const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+    //     .map((n) => S[n % S.length])
+    //     .join("");
+    //   // filenameをランダムな文字で定義
+    //   const fileName = randomChar + "_" + planImage.name;
+
+    //   // firestrageへ画像をアップ
+    //   const uploadPlanImg = storage.ref(`images/${fileName}`).put(planImage);
+    //   uploadPlanImg.on(
+    //     firebase.storage.TaskEvent.STATE_CHANGED,
+    //     // uploadの進捗を管理
+    //     () => {},
+    //     // errorのハンドリング
+    //     (err) => {
+    //       alert(err.message);
+    //     }
+    //   );
+    // } else {
+    const docId = Math.random().toString(32).substring(2);
+    const docRef = db.collection("plan").doc(docId);
+    docRef
+      .set({
+        title: posts.title,
+        contents: posts.contents,
+      })
+      .then(function () {
+        console.log("OK");
+        onClose();
+      })
+      .catch(function (err) {
+        console.log("error");
+      });
+    // }
+    onClose;
+  };
+
+  // eventオブジェクトを通じて選択された画像をplanImageへ保存
+  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setPlanImage(e.target.files[0]);
     }
   };
 
@@ -62,48 +95,58 @@ const Home: React.FC = (): JSX.Element => {
       <button className={style.btn} onClick={onOpen}>
         プランを作成
       </button>
-      <ChakraProvider>
-        <Modal isOpen={isOpen} onClose={onClose} size="5xl">
-          <ModalOverlay>
-            <ModalContent>
-              <ModalHeader>カードの作成</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <FormControl>
-                  <FormLabel>名前</FormLabel>
-                  <Input
-                    placeholder="タイトル"
-                    onChange={(e) =>
-                      setPosts({
-                        ...posts,
-                        title: e.target.value,
-                      })
-                    }
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>概要</FormLabel>
-                  <Input
-                    placeholder="旅行内容を入力"
-                    onChange={(e) =>
-                      setPosts({
-                        ...posts,
-                        contents: e.target.value,
-                      })
-                    }
-                  />
-                </FormControl>
-              </ModalBody>
-              <ModalFooter>
-                <Button colorScheme="pink" mr={4} onClick={handleClick}>
-                  保存
-                </Button>
-                <Button onClick={onClose}>キャンセル</Button>
-              </ModalFooter>
-            </ModalContent>
-          </ModalOverlay>
-        </Modal>
-      </ChakraProvider>
+      <form onSubmit={sendPlan}>
+        <ChakraProvider>
+          <Modal isOpen={isOpen} onClose={onClose} size="5xl">
+            <ModalOverlay>
+              <ModalContent>
+                <ModalHeader>カードの作成</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <FormControl>
+                    <FormLabel>名前</FormLabel>
+                    <Input
+                      placeholder="タイトル"
+                      onChange={(e) =>
+                        setPosts({
+                          ...posts,
+                          title: e.target.value,
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>概要</FormLabel>
+                    <Input
+                      placeholder="旅行内容を入力"
+                      onChange={(e) =>
+                        setPosts({
+                          ...posts,
+                          contents: e.target.value,
+                        })
+                      }
+                    />
+                  </FormControl>
+                  <label>
+                    <input type="file" onChange={onChangeImageHandler} />
+                  </label>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    colorScheme="pink"
+                    mr={4}
+                    disabled={!posts}
+                    onClick={sendPlan}
+                  >
+                    保存
+                  </Button>
+                  <Button onClick={onClose}>キャンセル</Button>
+                </ModalFooter>
+              </ModalContent>
+            </ModalOverlay>
+          </Modal>
+        </ChakraProvider>
+      </form>
       <div className={style.wrapper}>
         <Card title={posts.title} contents={posts.contents} />
       </div>
