@@ -36,10 +36,10 @@ const Card: React.FC<PROPS> = (props) => {
   // Cardがクリックされたらmodalをtrueに変更
   // TasksModalWindowにpropsで渡す
   const modalOpen = () => {
-    if(modal === false) {
-      setModal(true)
-    }else {
-      setModal(false)
+    if (modal === false) {
+      setModal(true);
+    } else {
+      setModal(false);
     }
   };
 
@@ -68,12 +68,12 @@ const Card: React.FC<PROPS> = (props) => {
                 <Center w="100%" h="30px">
                   <h2>{plan.contents}</h2>
                 </Center>
+                <TasksModalWindow modal={modal} planId={plan.id} />
               </Box>
             </div>
           ))}
         </WrapItem>
       </Wrap>
-      <TasksModalWindow modal={modal} />
     </div>
   );
 };

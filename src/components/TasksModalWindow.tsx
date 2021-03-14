@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   ChakraProvider,
@@ -14,14 +14,21 @@ import {
   Input,
   ModalFooter,
 } from "@chakra-ui/react";
+import { db } from "../firebase";
 
 interface PROPS {
-  // modalReset: () => void;
   modal: boolean;
+  planId: string;
 }
 
 const TasksModalWindow: React.FC<PROPS> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [tasks, setTasks] = useState({
+    taskName: "",
+    taskContents: "",
+  });
+
+  // console.log(props.titleId[0]);
 
   useEffect(() => {
     if (props.modal === true) {
@@ -32,6 +39,25 @@ const TasksModalWindow: React.FC<PROPS> = (props) => {
   // 処理完了後modalの状態をfalseにする
   const modalReset = () => {
     onClose();
+  };
+
+  const sendTask = async () => {
+    if (props.planId) {
+      console.log(tasks);
+      const docRef = db.collection("plan").doc(props.planId);
+      await docRef
+        .update({
+          tasksName: tasks.taskName,
+          taskContents: tasks.taskContents,
+        })
+        .then(function () {
+          onClose();
+        })
+        .catch(function (err) {
+          console.log("error");
+        });
+    }
+    setTasks({ taskName: "", taskContents: "" });
   };
 
   return (
@@ -46,15 +72,25 @@ const TasksModalWindow: React.FC<PROPS> = (props) => {
                 <ModalBody pb={6}>
                   <FormControl>
                     <FormLabel>何する？</FormLabel>
-                    <Input placeholder="何する？" />
+                    <Input
+                      placeholder="何する？"
+                      onChange={(e) =>
+                        setTasks({ ...tasks, taskName: e.target.value })
+                      }
+                    />
                   </FormControl>
                   <FormControl>
                     <FormLabel>概要</FormLabel>
-                    <Input placeholder="概要" />
+                    <Input
+                      placeholder="概要"
+                      onChange={(e) =>
+                        setTasks({ ...tasks, taskContents: e.target.value })
+                      }
+                    />
                   </FormControl>
                 </ModalBody>
                 <ModalFooter>
-                  <Button colorScheme="pink" mr={4}>
+                  <Button colorScheme="pink" mr={4} onClick={sendTask}>
                     保存
                   </Button>
                   <Button onClick={modalReset}>キャンセル</Button>
