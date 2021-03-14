@@ -1,6 +1,11 @@
 .conteiner {
+  margin: 0 auto;
   .card {
     padding: 10px;
+    &:hover {
+      transition: 0.5s;
+      opacity: 0.6;
+    }
     div {
       margin: 0;
       padding: 0;

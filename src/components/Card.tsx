@@ -1,26 +1,8 @@
 import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
-import {
-  Box,
-  Wrap,
-  WrapItem,
-  Center,
-  Image,
-  Button,
-  ChakraProvider,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  FormControl,
-  FormLabel,
-  Input,
-  ModalFooter,
-} from "@chakra-ui/react";
+import TasksModalWindow from "./TasksModalWindow";
+import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
 
 interface PROPS {
   title: string | number;
@@ -35,8 +17,7 @@ const Card: React.FC<PROPS> = (props) => {
       contents: "",
     },
   ]);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modal, setModal] = useState(false);
 
   // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
   useEffect(() => {
@@ -52,16 +33,31 @@ const Card: React.FC<PROPS> = (props) => {
     return () => unSub();
   }, [props.title]);
 
+  // Cardがクリックされたらmodalをtrueに変更
+  // TasksModalWindowにpropsで渡す
+  const modalOpen = () => {
+    if(modal === false) {
+      setModal(true)
+    }else {
+      setModal(false)
+    }
+  };
+
   return (
     <div className={style.conteiner}>
-      <Wrap>
-        <WrapItem onClick={onOpen} cursor="pointer">
+      <Wrap display="flex">
+        <WrapItem cursor="pointer" flexWrap="wrap" justifyContent="flex-start">
           {plans.map((plan) => (
             <div key={plan.id} className={style.card}>
-              <Box maxW="sm" borderWidth="1px" borderRadius="xl">
+              <Box
+                maxW="sm"
+                borderWidth="2px"
+                borderRadius="5"
+                onClick={modalOpen}
+              >
                 <Image
-                  width="200px"
-                  height="150px"
+                  width="180px"
+                  height="130px"
                   src="https://bit.ly/2Z4KKcF"
                   alt="Rear view of modern home with pool"
                   p="10px"
@@ -77,6 +73,7 @@ const Card: React.FC<PROPS> = (props) => {
           ))}
         </WrapItem>
       </Wrap>
+      <TasksModalWindow modal={modal} />
     </div>
   );
 };

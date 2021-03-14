@@ -35,13 +35,10 @@ const Home: React.FC = (): JSX.Element => {
   const [planImage, setPlanImage] = useState<File | null>(null);
 
   // 入力されたデータをfirebaseに保存
-  // titleからの場合、alertを表示
-
-  // firebase.storageへの保存方法を記述
-  const sendPlan = () => {
+  const sendPlan = async () => {
     const docId = Math.random().toString(32).substring(2);
     const docRef = db.collection("plan").doc(docId);
-    docRef
+    await docRef
       .set({
         title: posts.title,
         contents: posts.contents,
@@ -54,6 +51,7 @@ const Home: React.FC = (): JSX.Element => {
         console.log("error");
       });
     // }
+    setPosts({ title: "", contents: "" });
     onClose;
   };
 
@@ -67,7 +65,7 @@ const Home: React.FC = (): JSX.Element => {
   return (
     <div className={style.container}>
       <h1>
-        Plan a <span>solo</span> trip
+        Planning a <span>solo</span> trip
       </h1>
       <button className={style.btn} onClick={onOpen}>
         プランを作成
