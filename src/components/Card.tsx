@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TasksModalWindow from "./TasksModalWindow";
+import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
 
 interface PROPS {
@@ -18,6 +19,12 @@ const Card: React.FC<PROPS> = (props) => {
     },
   ]);
   const [modal, setModal] = useState(false);
+  const [getPlans, setGetPlans] = useState([
+    {
+      id: "",
+      tasksName: "",
+    },
+  ]);
 
   // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
   useEffect(() => {
@@ -68,7 +75,8 @@ const Card: React.FC<PROPS> = (props) => {
                 <Center w="100%" h="30px">
                   <h2>{plan.contents}</h2>
                 </Center>
-                <TasksModalWindow modal={modal} planId={plan.id} />
+                {/* <TasksModalWindow modal={modal} planId={plan.id} /> */}
+                <TaskList modal={modal} planId={plan.id} />
               </Box>
             </div>
           ))}
