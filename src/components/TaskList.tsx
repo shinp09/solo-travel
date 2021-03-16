@@ -12,8 +12,6 @@ import {
   ModalBody,
   ModalFooter,
   Box,
-  Text,
-  Center,
 } from "@chakra-ui/react";
 
 interface PROPS {
@@ -23,7 +21,7 @@ interface PROPS {
 
 const TaskList: React.FC<PROPS> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [getplans, setGetPlans] = useState([
+  const [getplansTask, setGetPlansTask] = useState([
     {
       id: "",
       tasksName: "",
@@ -33,27 +31,31 @@ const TaskList: React.FC<PROPS> = (props) => {
   // 初回は値が反映されずモーダルが開く
   // モーダルを閉じて再度開くと値が取得できている
   useEffect(() => {
+    taskGetFunction();
+  }, [props.modal]);
+
+  const taskGetFunction = () => {
     if (props.modal === true) {
-      db.collection("plan").onSnapshot((snapshot) => {
-        setGetPlans(
+      onOpen();
+      const unSub = db.collection("plan").onSnapshot((snapshot) => {
+        setGetPlansTask(
           snapshot.docs.map((doc) => ({
             id: doc.id,
             tasksName: doc.data().tasksName,
           }))
         );
+        return () => unSub();
       });
-      onOpen();
     } else {
-      onClose();
-      setGetPlans([{ id: "", tasksName: "" }]);
+      setGetPlansTask([{ id: "", tasksName: "" }]);
     }
-  }, [props.modal]);
+  };
 
   return (
     <div>
       <form>
         <ChakraProvider>
-          <Modal isOpen={isOpen} onClose={onClose} size="5xl">
+          <Modal isOpen={isOpen} onClose={onClose} size="6xl">
             <ModalOverlay>
               <ModalContent>
                 <ModalHeader>タスク一覧</ModalHeader>
@@ -65,7 +67,7 @@ const TaskList: React.FC<PROPS> = (props) => {
                     borderRadius="5"
                     bg="#eee8e8cc"
                   >
-                    {getplans.map((plan) => (
+                    {getplansTask.map((plan) => (
                       <div key={plan.id}>
                         <p>{plan.tasksName}</p>
                       </div>

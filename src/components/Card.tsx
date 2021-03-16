@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
+import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import TasksModalWindow from "./TasksModalWindow";
 import TaskList from "./TaskList";
@@ -18,17 +19,13 @@ const Card: React.FC<PROPS> = (props) => {
       contents: "",
     },
   ]);
+  const history = useHistory();
   const [modal, setModal] = useState(false);
-  const [getPlans, setGetPlans] = useState([
-    {
-      id: "",
-      tasksName: "",
-    },
-  ]);
+  const [getPlansId, setGetPlansId] = useState("");
 
   // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
   useEffect(() => {
-    const unSub = db.collection("plan").onSnapshot((snapshot) => {
+    db.collection("plan").onSnapshot((snapshot) => {
       setPlans(
         snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -37,14 +34,14 @@ const Card: React.FC<PROPS> = (props) => {
         }))
       );
     });
-    return () => unSub();
-  }, [props.title]);
+  }, []);
 
   // Cardがクリックされたらmodalをtrueに変更
   // TasksModalWindowにpropsで渡す
-  const modalOpen = () => {
+  const modalOpen = (id: string) => {
     if (modal === false) {
       setModal(true);
+      setGetPlansId(id);
     } else {
       setModal(false);
     }
@@ -55,13 +52,12 @@ const Card: React.FC<PROPS> = (props) => {
       <Wrap display="flex">
         <WrapItem cursor="pointer" flexWrap="wrap" justifyContent="flex-start">
           {plans.map((plan) => (
-            <div key={plan.id} className={style.card}>
-              <Box
-                maxW="sm"
-                borderWidth="2px"
-                borderRadius="5"
-                onClick={modalOpen}
-              >
+            <div
+              key={plan.id}
+              className={style.card}
+              onClick={() => modalOpen(plan.id)}
+            >
+              <Box maxW="sm" borderWidth="2px" borderRadius="5">
                 <Image
                   width="180px"
                   height="130px"
@@ -75,13 +71,12 @@ const Card: React.FC<PROPS> = (props) => {
                 <Center w="100%" h="30px">
                   <h2>{plan.contents}</h2>
                 </Center>
-                {/* <TasksModalWindow modal={modal} planId={plan.id} /> */}
-                <TaskList modal={modal} planId={plan.id} />
               </Box>
             </div>
           ))}
         </WrapItem>
       </Wrap>
+      <TaskList modal={modal} planId={getPlansId} />
     </div>
   );
 };
