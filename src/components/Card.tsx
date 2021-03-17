@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
-import TasksModalWindow from "./TasksModalWindow";
+// import CreateTask from "./CreateTask";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
 
