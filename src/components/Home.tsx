@@ -35,36 +35,10 @@ const Home: React.FC = (): JSX.Element => {
   const [planImage, setPlanImage] = useState<File | null>(null);
 
   // 入力されたデータをfirebaseに保存
-  // titleからの場合、alertを表示
-
-  // firebase.storageへの保存方法を記述
-  const sendPlan = () => {
-    // console.log("起動");
-    // if (planImage) {
-    //   const S =
-    //     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    //   const N = 16;
-    //   const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
-    //     .map((n) => S[n % S.length])
-    //     .join("");
-    //   // filenameをランダムな文字で定義
-    //   const fileName = randomChar + "_" + planImage.name;
-
-    //   // firestrageへ画像をアップ
-    //   const uploadPlanImg = storage.ref(`images/${fileName}`).put(planImage);
-    //   uploadPlanImg.on(
-    //     firebase.storage.TaskEvent.STATE_CHANGED,
-    //     // uploadの進捗を管理
-    //     () => {},
-    //     // errorのハンドリング
-    //     (err) => {
-    //       alert(err.message);
-    //     }
-    //   );
-    // } else {
+  const sendPlan = async () => {
     const docId = Math.random().toString(32).substring(2);
     const docRef = db.collection("plan").doc(docId);
-    docRef
+    await docRef
       .set({
         title: posts.title,
         contents: posts.contents,
@@ -77,6 +51,7 @@ const Home: React.FC = (): JSX.Element => {
         console.log("error");
       });
     // }
+    setPosts({ title: "", contents: "" });
     onClose;
   };
 
@@ -90,7 +65,7 @@ const Home: React.FC = (): JSX.Element => {
   return (
     <div className={style.container}>
       <h1>
-        Plan a <span>solo</span> trip
+        Planding a <span>solo</span> trip
       </h1>
       <button className={style.btn} onClick={onOpen}>
         プランを作成
@@ -128,6 +103,7 @@ const Home: React.FC = (): JSX.Element => {
                     />
                   </FormControl>
                   <label>
+                    <GrCamera />
                     <input type="file" onChange={onChangeImageHandler} />
                   </label>
                 </ModalBody>
@@ -148,7 +124,7 @@ const Home: React.FC = (): JSX.Element => {
         </ChakraProvider>
       </form>
       <div className={style.wrapper}>
-        <Card title={posts.title} contents={posts.contents} />
+        <Card />
       </div>
     </div>
   );
