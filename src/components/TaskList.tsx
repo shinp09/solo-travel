@@ -15,7 +15,6 @@ import {
   FormControl,
   Input,
 } from "@chakra-ui/react";
-import Task from "./Task";
 
 interface PROPS {
   modal: boolean;
@@ -36,33 +35,38 @@ const TaskList: React.FC<PROPS> = (props) => {
   // 初回は値が反映されずモーダルが開く
   // モーダルを閉じて再度開くと値が取得できている
   useEffect(() => {
-    taskGetFunction();
-  }, [props.modal]);
-
-  const taskGetFunction = () => {
     if (props.modal === true) {
       onOpen();
-      const unSub = db.collection("plan").onSnapshot((snapshot) => {
-        setGetPlansTask(
-          snapshot.docs.map((doc) => ({
-            id: doc.id,
-            tasksName: doc.data().tasksName,
-          }))
-        );
-        return () => unSub();
-      });
+      const unSub = db
+        .collection("plan")
+        .doc(props.planId)
+        .collection("task")
+        .onSnapshot((snapshot) => {
+          setGetPlansTask(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              tasksName: doc.data().task,
+            }))
+          );
+          return () => unSub();
+        });
     } else {
       setGetPlansTask([{ id: "", tasksName: "" }]);
     }
-  };
+  }, [props.modal]);
 
   const createTask = () => {
-    setChangeModal(false);
-    db.collection("plan")
-      .doc(props.planId)
-      .collection("task")
-      .add({ task: task });
-    setTask("");
+    if (task) {
+      setChangeModal(false);
+      db.collection("plan")
+        .doc(props.planId)
+        .collection("task")
+        .add({ task: task });
+      setTask("");
+      setChangeModal(true);
+    } else if (task === "") {
+      alert("タスクを入力してください");
+    }
   };
 
   return (
@@ -76,22 +80,24 @@ const TaskList: React.FC<PROPS> = (props) => {
                   <ModalHeader>タスク一覧</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody pb={400}>
-                    <Box
-                      maxW="sm"
-                      borderWidth="2px"
-                      borderRadius="5"
-                      bg="#eee8e8cc"
-                    >
-                      {getplansTask.map((plan) => (
-                        <div key={plan.id}>
-                          <p>{plan.tasksName}</p>
-                        </div>
-                      ))}
-                    </Box>
-                    <Task planId={props.planId} />
+                    {getplansTask.map((task) => (
+                      <Box
+                        maxW="sm"
+                        borderWidth="2px"
+                        borderRadius="5"
+                        bg="#eee8e8cc"
+                        key={task.id}
+                      >
+                        {task.tasksName}
+                      </Box>
+                    ))}
                   </ModalBody>
                   <ModalFooter>
-                    <Button colorScheme="pink" mr={4} onClick={createTask}>
+                    <Button
+                      colorScheme="pink"
+                      mr={4}
+                      onClick={() => setChangeModal(false)}
+                    >
                       タスクを追加する
                     </Button>
                     <Button onClick={onClose}>キャンセル</Button>
@@ -114,18 +120,12 @@ const TaskList: React.FC<PROPS> = (props) => {
                     </FormControl>
                   </ModalBody>
                   <ModalFooter>
-                    <form onSubmit={createTask}>
-                      <Button
-                        colorScheme="pink"
-                        mr={4}
-                        onClick={() => setChangeModal(true)}
-                      >
+                    <form>
+                      <Button colorScheme="pink" mr={4} onClick={createTask}>
                         保存
                       </Button>
                     </form>
-                    <Button onClick={() => setChangeModal(true)}>
-                      キャンセル
-                    </Button>
+                    <Button onClick={() => setChangeModal(true)}>戻る</Button>
                   </ModalFooter>
                 </ModalContent>
               </ModalOverlay>
