@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
-import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
-// import CreateTask from "./CreateTask";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
 
-interface PROPS {
-  title: string | number;
-  contents?: string | number;
-}
-
-const Card: React.FC<PROPS> = (props) => {
+const Card: React.FC = () => {
   const [plans, setPlans] = useState([
     {
       id: "",
@@ -19,7 +12,6 @@ const Card: React.FC<PROPS> = (props) => {
       contents: "",
     },
   ]);
-  const history = useHistory();
   const [modal, setModal] = useState(false);
   const [getPlansId, setGetPlansId] = useState("");
 

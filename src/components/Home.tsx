@@ -65,7 +65,7 @@ const Home: React.FC = (): JSX.Element => {
   return (
     <div className={style.container}>
       <h1>
-        Planning a <span>solo</span> trip
+        Planding a <span>solo</span> trip
       </h1>
       <button className={style.btn} onClick={onOpen}>
         プランを作成
@@ -124,7 +124,7 @@ const Home: React.FC = (): JSX.Element => {
         </ChakraProvider>
       </form>
       <div className={style.wrapper}>
-        <Card title={posts.title} contents={posts.contents} />
+        <Card />
       </div>
     </div>
   );
