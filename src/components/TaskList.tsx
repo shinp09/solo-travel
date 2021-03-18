@@ -14,6 +14,7 @@ import {
   Box,
   FormControl,
   Input,
+  Center,
 } from "@chakra-ui/react";
 
 interface PROPS {
@@ -82,10 +83,15 @@ const TaskList: React.FC<PROPS> = (props) => {
                   <ModalBody pb={400}>
                     {getplansTask.map((task) => (
                       <Box
-                        maxW="sm"
+                        maxW="200px"
                         borderWidth="2px"
                         borderRadius="5"
                         bg="#eee8e8cc"
+                        h="40px"
+                        margin="5px"
+                        p="6px"
+                        fontSize="sm"
+                        textAlign="center"
                         key={task.id}
                       >
                         {task.tasksName}
