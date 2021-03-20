@@ -36,6 +36,20 @@ const Home: React.FC = (): JSX.Element => {
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = async () => {
+    // 画像がある場合storageに保存
+    if (planImage) {
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+        .map((n) => S[n % S.length])
+        .join("");
+      const fileName = randomChar + "_" + planImage.name;
+      const uploadPlanImg = storage.ref(`images/${fileName}`).put(planImage);
+      //   onを使い、storageに何らかの処理があった場合の後処理を記述
+      uploadPlanImg.on(firebase.storage.TaskEvent.STATE_CHANGED);
+    }
+
     const docId = Math.random().toString(32).substring(2);
     const docRef = db.collection("plan").doc(docId);
     await docRef
