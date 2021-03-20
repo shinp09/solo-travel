@@ -1,0 +1,13 @@
+.box {
+  &:hover {
+    opacity: 0.6;
+    cursor: pointer;
+    transition: 0.5s;
+  }
+  Text {
+    overflow-wrap: break-word;
+  }
+  .icon {
+    text-align: right;
+  }
+}

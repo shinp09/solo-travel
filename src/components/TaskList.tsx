@@ -14,8 +14,11 @@ import {
   Box,
   FormControl,
   Input,
-  Center,
+  Text,
 } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import style from "./TaskList.module.scss";
+import EditTask from "./EditTask";
 
 interface PROPS {
   modal: boolean;
@@ -32,6 +35,7 @@ const TaskList: React.FC<PROPS> = (props) => {
   ]);
   const [changeModal, setChangeModal] = useState<boolean>(true);
   const [task, setTask] = useState<string | number>("");
+  const [editModal, setEditModal] = useState(false);
 
   // 初回は値が反映されずモーダルが開く
   // モーダルを閉じて再度開くと値が取得できている
@@ -63,11 +67,20 @@ const TaskList: React.FC<PROPS> = (props) => {
         .doc(props.planId)
         .collection("task")
         .add({ task: task });
-      setTask("");
       setChangeModal(true);
     } else if (task === "") {
       alert("タスクを入力してください");
     }
+  };
+
+  const onClickEditTask = (index: number) => {
+    setEditModal(true);
+    db.collection("plan").doc(props.planId).update({ task: task });
+  };
+
+  const deleteTask = () => {
+    alert("タスクを削除しました");
+    setEditModal(false);
   };
 
   return (
@@ -80,21 +93,24 @@ const TaskList: React.FC<PROPS> = (props) => {
                 <ModalContent>
                   <ModalHeader>タスク一覧</ModalHeader>
                   <ModalCloseButton />
-                  <ModalBody pb={400}>
-                    {getplansTask.map((task) => (
+                  <ModalBody>
+                    {getplansTask.map((task, index) => (
                       <Box
-                        maxW="200px"
+                        maxW="300px"
                         borderWidth="2px"
                         borderRadius="5"
                         bg="#eee8e8cc"
                         h="40px"
-                        margin="5px"
-                        p="6px"
-                        fontSize="sm"
-                        textAlign="center"
+                        margin="5px 0"
+                        textAlign="right"
                         key={task.id}
+                        p={1.5}
+                        onClick={(e) => onClickEditTask(index)}
+                        className={style.box}
                       >
-                        {task.tasksName}
+                        <Text fontSize="sm" textAlign="left">
+                          {task.tasksName}
+                        </Text>
                       </Box>
                     ))}
                   </ModalBody>
@@ -127,7 +143,11 @@ const TaskList: React.FC<PROPS> = (props) => {
                   </ModalBody>
                   <ModalFooter>
                     <form>
-                      <Button colorScheme="pink" mr={4} onClick={createTask}>
+                      <Button
+                        colorScheme="pink"
+                        mr={4}
+                        onClick={() => createTask()}
+                      >
                         保存
                       </Button>
                     </form>
@@ -137,7 +157,41 @@ const TaskList: React.FC<PROPS> = (props) => {
               </ModalOverlay>
             </Modal>
           )}
+          {editModal && (
+            <Modal isOpen={isOpen} onClose={onClose} size="xl">
+              <ModalOverlay>
+                <ModalContent>
+                  <ModalHeader>タスクの編集</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={10}>
+                    <FormControl>
+                      <Input
+                        placeholder="タスクの名前を入力してください"
+                        onChange={(e) => setTask(e.target.value)}
+                      />
+                    </FormControl>
+                  </ModalBody>
+                  <ModalFooter>
+                    <form>
+                      <Button
+                        colorScheme="gray"
+                        mr={4}
+                        onClick={() => deleteTask()}
+                      >
+                        <DeleteIcon />
+                      </Button>
+                      <Button colorScheme="pink" mr={4} onClick={createTask}>
+                        保存
+                      </Button>
+                    </form>
+                    <Button onClick={() => setEditModal(false)}>戻る</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </ModalOverlay>
+            </Modal>
+          )}
         </ChakraProvider>
+        {/* <EditTask onClickEditTask={onClickEditTask} /> */}
       </form>
     </div>
   );
