@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
-import firebase from "firebase/app";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
+import EditTask from "./EditTask";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
@@ -17,6 +17,7 @@ const Card: React.FC = () => {
   ]);
   const [modal, setModal] = useState(false);
   const [getPlansId, setGetPlansId] = useState("");
+  // const planId = React.createContext("");
 
   // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
   useEffect(() => {
@@ -74,6 +75,9 @@ const Card: React.FC = () => {
         </WrapItem>
       </Wrap>
       <TaskList modal={modal} planId={getPlansId} />
+      {/* <planId.Provider value={getPlansId}>
+      <EditTask id={""} taskName={""} />
+      </planId.Provider> */}
     </div>
   );
 };

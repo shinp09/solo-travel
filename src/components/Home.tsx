@@ -82,6 +82,7 @@ const Home: React.FC = (): JSX.Element => {
       });
     }
     setPosts({ title: "", contents: "" });
+    setPlanImage(null);
     onClose();
   };
 

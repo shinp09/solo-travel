@@ -16,9 +16,9 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import { DeleteIcon } from "@chakra-ui/icons";
 import style from "./TaskList.module.scss";
 import EditTask from "./EditTask";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 interface PROPS {
   modal: boolean;
@@ -27,7 +27,7 @@ interface PROPS {
 
 const TaskList: React.FC<PROPS> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [getplansTask, setGetPlansTask] = useState([
+  const [getPlansTask, setGetPlansTask] = useState([
     {
       id: "",
       tasksName: "",
@@ -36,6 +36,11 @@ const TaskList: React.FC<PROPS> = (props) => {
   const [changeModal, setChangeModal] = useState<boolean>(true);
   const [task, setTask] = useState<string | number>("");
   const [editModal, setEditModal] = useState(false);
+  const [openEditTask, setOpenEditTask] = useState(false);
+  const [clickPlansTask, setClickPlansTask] = useState({
+    id: "",
+    taskName: "",
+  });
 
   // 初回は値が反映されずモーダルが開く
   // モーダルを閉じて再度開くと値が取得できている
@@ -51,6 +56,7 @@ const TaskList: React.FC<PROPS> = (props) => {
             snapshot.docs.map((doc) => ({
               id: doc.id,
               tasksName: doc.data().task,
+              index: doc.data().index,
             }))
           );
           return () => unSub();
@@ -73,14 +79,26 @@ const TaskList: React.FC<PROPS> = (props) => {
     }
   };
 
-  const onClickEditTask = (index: number) => {
-    setEditModal(true);
-    db.collection("plan").doc(props.planId).update({ task: task });
+  // リファクタリング
+  // 渡ってきたindexに該当する番号だけを表示したい
+  const onClickEditTask = async (index: number) => {
+    if (openEditTask === false) {
+      setOpenEditTask(true);
+      // 配列内からindex番号を取得し格納
+      setClickPlansTask({
+        id: getPlansTask[index].id,
+        taskName: getPlansTask[index].tasksName,
+      });
+    } else {
+      setOpenEditTask(false);
+    }
   };
 
-  const deleteTask = () => {
-    alert("タスクを削除しました");
-    setEditModal(false);
+  // Planの削除
+  const deletePlan = () => {
+    db.collection("plan").doc(props.planId).delete();
+    onClose();
+    alert("削除しました");
   };
 
   return (
@@ -88,33 +106,43 @@ const TaskList: React.FC<PROPS> = (props) => {
       <form>
         <ChakraProvider>
           {changeModal ? (
-            <Modal isOpen={isOpen} onClose={onClose} size="xl">
+            <Modal isOpen={isOpen} onClose={onClose} size="3xl">
               <ModalOverlay>
                 <ModalContent>
                   <ModalHeader>タスク一覧</ModalHeader>
                   <ModalCloseButton />
-                  <ModalBody>
-                    {getplansTask.map((task, index) => (
-                      <Box
-                        maxW="300px"
-                        borderWidth="2px"
-                        borderRadius="5"
-                        bg="#eee8e8cc"
-                        h="40px"
-                        margin="5px 0"
-                        textAlign="right"
-                        key={task.id}
-                        p={1.5}
-                        onClick={(e) => onClickEditTask(index)}
-                        className={style.box}
-                      >
-                        <Text fontSize="sm" textAlign="left">
-                          {task.tasksName}
-                        </Text>
-                      </Box>
+                  <ModalBody className={style.container}>
+                    {getPlansTask.map((task, index) => (
+                      <div key={task.id}>
+                        <Box
+                          w="300px"
+                          h="40px"
+                          borderWidth="2px"
+                          borderRadius="5"
+                          bg="#eee8e8cc"
+                          textAlign="right"
+                          onClick={() => onClickEditTask(index)}
+                          className={style.box}
+                        >
+                          <Text fontSize="sm" textAlign="left">
+                            {task.tasksName}
+                          </Text>
+                        </Box>
+                      </div>
                     ))}
+                    <EditTask
+                      openEditTask={openEditTask}
+                      planId={props.planId}
+                      task={{
+                        id: clickPlansTask.id,
+                        taskName: clickPlansTask.taskName,
+                      }}
+                    />
                   </ModalBody>
                   <ModalFooter>
+                    <Button mr={4} onClick={deletePlan}>
+                      プランを削除
+                    </Button>
                     <Button
                       colorScheme="pink"
                       mr={4}
@@ -157,41 +185,7 @@ const TaskList: React.FC<PROPS> = (props) => {
               </ModalOverlay>
             </Modal>
           )}
-          {editModal && (
-            <Modal isOpen={isOpen} onClose={onClose} size="xl">
-              <ModalOverlay>
-                <ModalContent>
-                  <ModalHeader>タスクの編集</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody pb={10}>
-                    <FormControl>
-                      <Input
-                        placeholder="タスクの名前を入力してください"
-                        onChange={(e) => setTask(e.target.value)}
-                      />
-                    </FormControl>
-                  </ModalBody>
-                  <ModalFooter>
-                    <form>
-                      <Button
-                        colorScheme="gray"
-                        mr={4}
-                        onClick={() => deleteTask()}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                      <Button colorScheme="pink" mr={4} onClick={createTask}>
-                        保存
-                      </Button>
-                    </form>
-                    <Button onClick={() => setEditModal(false)}>戻る</Button>
-                  </ModalFooter>
-                </ModalContent>
-              </ModalOverlay>
-            </Modal>
-          )}
         </ChakraProvider>
-        {/* <EditTask onClickEditTask={onClickEditTask} /> */}
       </form>
     </div>
   );
