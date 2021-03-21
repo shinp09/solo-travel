@@ -35,24 +35,55 @@ const Home: React.FC = (): JSX.Element => {
   const [planImage, setPlanImage] = useState<File | null>(null);
 
   // 入力されたデータをfirebaseに保存
-  const sendPlan = async () => {
-    const docId = Math.random().toString(32).substring(2);
-    const docRef = db.collection("plan").doc(docId);
-    await docRef
-      .set({
+  const sendPlan = () => {
+    // 画像がある場合storageに保存
+    if (planImage) {
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+        .map((n) => S[n % S.length])
+        .join("");
+      const fileName = randomChar + "_" + planImage.name;
+      const uploadPlanImg = storage.ref(`images/${fileName}`).put(planImage);
+      //   onを使い、storageに何らかの処理があった場合の後処理を記述
+      uploadPlanImg.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        // uploadの進捗を管理
+        () => {},
+        // errorのハンドリング
+        (err) => {
+          alert(err.message);
+        },
+        // 正常終了した場合にstorageの画像URLを取得し、作成されたプランをDBに保存
+        async () => {
+          await storage
+            // 画像URLを取得
+            .ref("images")
+            .child(fileName)
+            .getDownloadURL()
+            .then(async (url) => {
+              await db.collection("plan").add({
+                title: posts.title,
+                image: url,
+                contents: posts.contents,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              });
+            });
+        }
+      );
+      // imageがない場合は、他情報のみDBに保存
+    } else {
+      db.collection("plan").add({
         title: posts.title,
+        image: "",
         contents: posts.contents,
-      })
-      .then(function () {
-        console.log("OK");
-        onClose();
-      })
-      .catch(function (err) {
-        console.log("error");
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
-    // }
+    }
     setPosts({ title: "", contents: "" });
-    onClose;
+    setPlanImage(null);
+    onClose();
   };
 
   // eventオブジェクトを通じて選択された画像をplanImageへ保存

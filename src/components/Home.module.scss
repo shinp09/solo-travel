@@ -42,28 +42,10 @@
   .wrapper {
     display: block;
     margin: 0 auto;
-    max-width: 1200px;
+    max-width: 1400px;
     height: 600px;
     border: 1px solid #f0f0f0;
     padding: 16px;
     background-color: #f7f7f7;
-  }
-}
-
-.secondaryBtn {
-  background-color: grey;
-  border-radius: 50px;
-  color: #fff;
-  outline: none;
-  display: block;
-  margin: 0px auto;
-  padding: 14px;
-  width: 150px;
-  font-size: 14px;
-  border: none;
-  font-weight: 700;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.8;
   }
 }

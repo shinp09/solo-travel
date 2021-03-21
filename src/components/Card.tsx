@@ -3,6 +3,7 @@ import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
+import EditTask from "./EditTask";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
@@ -10,10 +11,13 @@ const Card: React.FC = () => {
       id: "",
       title: "",
       contents: "",
+      image: "",
+      timestamp: "",
     },
   ]);
   const [modal, setModal] = useState(false);
   const [getPlansId, setGetPlansId] = useState("");
+  // const planId = React.createContext("");
 
   // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
   useEffect(() => {
@@ -23,6 +27,8 @@ const Card: React.FC = () => {
           id: doc.id,
           title: doc.data().title,
           contents: doc.data().contents,
+          image: doc.data().image,
+          timestamp: doc.data().timestamp,
         }))
       );
     });
@@ -51,10 +57,10 @@ const Card: React.FC = () => {
             >
               <Box maxW="sm" borderWidth="2px" borderRadius="5">
                 <Image
-                  width="180px"
-                  height="130px"
-                  src="https://bit.ly/2Z4KKcF"
-                  alt="Rear view of modern home with pool"
+                  width="300px"
+                  height="150px"
+                  src={plan.image}
+                  alt=""
                   p="10px"
                 />
                 <Center w="100%" h="30px">
@@ -69,6 +75,9 @@ const Card: React.FC = () => {
         </WrapItem>
       </Wrap>
       <TaskList modal={modal} planId={getPlansId} />
+      {/* <planId.Provider value={getPlansId}>
+      <EditTask id={""} taskName={""} />
+      </planId.Provider> */}
     </div>
   );
 };
