@@ -40,7 +40,7 @@ const Card: React.FC = () => {
 
   return (
     <div className={style.conteiner}>
-      <Wrap display="flex">
+      <Wrap display="inline-block">
         <WrapItem cursor="pointer" flexWrap="wrap" justifyContent="flex-start">
           {plans.map((plan) => (
             <div
@@ -50,7 +50,7 @@ const Card: React.FC = () => {
             >
               <Box maxW="sm" borderWidth="2px" borderRadius="5">
                 <Image
-                  width="300px"
+                  width="250px"
                   height="150px"
                   src={plan.image}
                   alt=""

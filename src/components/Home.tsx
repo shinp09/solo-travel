@@ -11,7 +11,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
   ModalBody,
   FormControl,
   FormLabel,
@@ -106,7 +105,6 @@ const Home: React.FC = (): JSX.Element => {
             <ModalOverlay>
               <ModalContent>
                 <ModalHeader>カードの作成</ModalHeader>
-                <ModalCloseButton />
                 <ModalBody pb={6}>
                   <FormControl>
                     <FormLabel>名前</FormLabel>
