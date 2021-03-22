@@ -6,7 +6,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
   ModalBody,
   ModalFooter,
   FormControl,
@@ -74,7 +73,6 @@ const EditTask: React.FC<PROPS> = (props) => {
           <ModalOverlay>
             <ModalContent>
               <ModalHeader>タスクの詳細</ModalHeader>
-              <ModalCloseButton />
               <ModalBody pb={10}>
                 {props.task.taskName}
                 <Image src={props.task.taskImg} m={5} w="400px" h="300px" />
