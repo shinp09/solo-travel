@@ -3,6 +3,8 @@
 旅行の計画・思い出保存ができるアプリです。
 ※開発中
 
+https://planding-solotrip.web.app/
+
 ## 使用技術
 
 - React

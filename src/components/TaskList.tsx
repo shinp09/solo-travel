@@ -7,6 +7,7 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
+  ModalCloseButton,
   ModalBody,
   ModalFooter,
   Box,
@@ -163,6 +164,7 @@ const TaskList: React.FC<PROPS> = (props) => {
               <ModalOverlay>
                 <ModalContent>
                   <ModalHeader>タスク一覧</ModalHeader>
+                  <ModalCloseButton />
                   <ModalBody className={style.container}>
                     {getPlansTask.map((task, index) => (
                       <div key={task.id}>
@@ -212,6 +214,7 @@ const TaskList: React.FC<PROPS> = (props) => {
               <ModalOverlay>
                 <ModalContent>
                   <ModalHeader>タスクの作成</ModalHeader>
+                  <ModalCloseButton />
                   <ModalBody pb={10}>
                     <FormControl>
                       <Input
