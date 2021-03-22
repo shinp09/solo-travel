@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
-import EditTask from "./EditTask";
+import { MainModalContext } from "./ContextProvider";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
@@ -15,11 +15,10 @@ const Card: React.FC = () => {
       timestamp: "",
     },
   ]);
-  const [modal, setModal] = useState(false);
-  const [getPlansId, setGetPlansId] = useState("");
-  // const planId = React.createContext("");
 
-  // Homeからtitleが渡ってきたら、データベースにあるplanの中身を取得
+  const [getPlansId, setGetPlansId] = useState("");
+  const { mainModalState, mainModal } = useContext(MainModalContext);
+
   useEffect(() => {
     db.collection("plan").onSnapshot((snapshot) => {
       setPlans(
@@ -34,15 +33,9 @@ const Card: React.FC = () => {
     });
   }, []);
 
-  // Cardがクリックされたらmodalをtrueに変更
-  // TasksModalWindowにpropsで渡す
-  const modalOpen = (id: string) => {
-    if (modal === false) {
-      setModal(true);
-      setGetPlansId(id);
-    } else {
-      setModal(false);
-    }
+  const modalOpen = async (id: string) => {
+    mainModalState();
+    setGetPlansId(id);
   };
 
   return (
@@ -74,10 +67,7 @@ const Card: React.FC = () => {
           ))}
         </WrapItem>
       </Wrap>
-      <TaskList modal={modal} planId={getPlansId} />
-      {/* <planId.Provider value={getPlansId}>
-      <EditTask id={""} taskName={""} />
-      </planId.Provider> */}
+      <TaskList planId={getPlansId} />
     </div>
   );
 };

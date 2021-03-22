@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { db } from "../firebase";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Button,
   ChakraProvider,
@@ -18,10 +17,11 @@ import {
 } from "@chakra-ui/react";
 import style from "./TaskList.module.scss";
 import EditTask from "./EditTask";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { MainModalContext, SubModalContext } from "./ContextProvider";
+import firebase from "firebase/app";
+import { db, storage } from "../firebase";
 
 interface PROPS {
-  modal: boolean;
   planId: string;
 }
 
@@ -31,21 +31,24 @@ const TaskList: React.FC<PROPS> = (props) => {
     {
       id: "",
       tasksName: "",
+      taskImg: "",
     },
   ]);
   const [changeModal, setChangeModal] = useState<boolean>(true);
   const [task, setTask] = useState<string | number>("");
-  const [editModal, setEditModal] = useState(false);
-  const [openEditTask, setOpenEditTask] = useState(false);
   const [clickPlansTask, setClickPlansTask] = useState({
     id: "",
     taskName: "",
+    taskImg: "",
   });
+  const [taskImage, setTaskImage] = useState<File | null>(null);
+  const { mainModalState, mainModal } = useContext(MainModalContext);
+  const { subModalState } = useContext(SubModalContext);
 
   // 初回は値が反映されずモーダルが開く
   // モーダルを閉じて再度開くと値が取得できている
   useEffect(() => {
-    if (props.modal === true) {
+    if (mainModal === true) {
       onOpen();
       const unSub = db
         .collection("plan")
@@ -55,50 +58,101 @@ const TaskList: React.FC<PROPS> = (props) => {
           setGetPlansTask(
             snapshot.docs.map((doc) => ({
               id: doc.id,
-              tasksName: doc.data().task,
+              tasksName: doc.data().name,
+              taskImg: doc.data().image,
               index: doc.data().index,
             }))
           );
           return () => unSub();
         });
     } else {
-      setGetPlansTask([{ id: "", tasksName: "" }]);
+      setGetPlansTask([{ id: "", tasksName: "", taskImg: "" }]);
     }
-  }, [props.modal]);
+  }, [mainModal]);
 
+  // taskの新規作成・画像保存
   const createTask = () => {
-    if (task) {
-      setChangeModal(false);
+    // taskの新規作成・画像保存
+    if (taskImage) {
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+        .map((n) => S[n % S.length])
+        .join("");
+      const fileName = randomChar + "_" + taskImage.name;
+      const uploadPlanImg = storage.ref(`images/${fileName}`).put(taskImage);
+      //   onを使い、storageに何らかの処理があった場合の後処理を記述
+      uploadPlanImg.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        // uploadの進捗を管理
+        () => {},
+        // errorのハンドリング
+        (err) => {
+          alert(err.message);
+        },
+        // 正常終了した場合にstorageの画像URLを取得し、作成されたプランをDBに保存
+        async () => {
+          await storage
+            // 画像URLを取得
+            .ref("images")
+            .child(fileName)
+            .getDownloadURL()
+            .then(async (url) => {
+              await db
+                .collection("plan")
+                .doc(props.planId)
+                .collection("task")
+                .add({
+                  name: task,
+                  image: url,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            });
+        }
+      );
+    } else {
       db.collection("plan")
         .doc(props.planId)
         .collection("task")
-        .add({ task: task });
-      setChangeModal(true);
-    } else if (task === "") {
-      alert("タスクを入力してください");
+        .add({ name: task });
+    }
+    setTask("");
+    setTaskImage(null);
+    setChangeModal(true);
+  };
+
+  // taskImageで追加された値を保存
+  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setTaskImage(e.target.files[0]);
     }
   };
 
   // リファクタリング
   // 渡ってきたindexに該当する番号だけを表示したい
-  const onClickEditTask = async (index: number) => {
-    if (openEditTask === false) {
-      setOpenEditTask(true);
-      // 配列内からindex番号を取得し格納
-      setClickPlansTask({
-        id: getPlansTask[index].id,
-        taskName: getPlansTask[index].tasksName,
-      });
-    } else {
-      setOpenEditTask(false);
-    }
+  const onClickEditTask = (index: number) => {
+    subModalState();
+    // 配列内からindex番号を取得し格納
+    setClickPlansTask({
+      id: getPlansTask[index].id,
+      taskName: getPlansTask[index].tasksName,
+      taskImg: getPlansTask[index].taskImg,
+    });
   };
 
   // Planの削除
   const deletePlan = () => {
     db.collection("plan").doc(props.planId).delete();
+    mainModalState();
     onClose();
     alert("削除しました");
+  };
+
+  // modalを閉じる
+  const closeModal = () => {
+    onClose();
+    mainModalState();
   };
 
   return (
@@ -131,11 +185,11 @@ const TaskList: React.FC<PROPS> = (props) => {
                       </div>
                     ))}
                     <EditTask
-                      openEditTask={openEditTask}
                       planId={props.planId}
                       task={{
                         id: clickPlansTask.id,
                         taskName: clickPlansTask.taskName,
+                        taskImg: clickPlansTask.taskImg,
                       }}
                     />
                   </ModalBody>
@@ -150,7 +204,7 @@ const TaskList: React.FC<PROPS> = (props) => {
                     >
                       タスクを追加する
                     </Button>
-                    <Button onClick={onClose}>キャンセル</Button>
+                    <Button onClick={closeModal}>キャンセル</Button>
                   </ModalFooter>
                 </ModalContent>
               </ModalOverlay>
@@ -168,6 +222,9 @@ const TaskList: React.FC<PROPS> = (props) => {
                         onChange={(e) => setTask(e.target.value)}
                       />
                     </FormControl>
+                    <label>
+                      <input type="file" onChange={onChangeImageHandler} />
+                    </label>
                   </ModalBody>
                   <ModalFooter>
                     <form>
