@@ -17,12 +17,11 @@ import {
 } from "@chakra-ui/react";
 import style from "./TaskList.module.scss";
 import EditTask from "./EditTask";
-import { MainModalContext } from "./ContextProvider";
+import { MainModalContext, SubModalContext } from "./ContextProvider";
 import firebase from "firebase/app";
 import { db, storage } from "../firebase";
 
 interface PROPS {
-  modal: boolean;
   planId: string;
 }
 
@@ -37,20 +36,19 @@ const TaskList: React.FC<PROPS> = (props) => {
   ]);
   const [changeModal, setChangeModal] = useState<boolean>(true);
   const [task, setTask] = useState<string | number>("");
-  const [editModal, setEditModal] = useState(false);
-  const [openEditTask, setOpenEditTask] = useState(false);
   const [clickPlansTask, setClickPlansTask] = useState({
     id: "",
     taskName: "",
     taskImg: "",
   });
   const [taskImage, setTaskImage] = useState<File | null>(null);
-  const { mainModalOpen, mainModal } = useContext(MainModalContext);
+  const { mainModalState, mainModal } = useContext(MainModalContext);
+  const { subModalState } = useContext(SubModalContext);
 
   // 初回は値が反映されずモーダルが開く
   // モーダルを閉じて再度開くと値が取得できている
   useEffect(() => {
-    if (props.modal === true) {
+    if (mainModal === true) {
       onOpen();
       const unSub = db
         .collection("plan")
@@ -70,7 +68,7 @@ const TaskList: React.FC<PROPS> = (props) => {
     } else {
       setGetPlansTask([{ id: "", tasksName: "", taskImg: "" }]);
     }
-  }, [props.modal]);
+  }, [mainModal]);
 
   // taskの新規作成・画像保存
   const createTask = () => {
@@ -113,19 +111,15 @@ const TaskList: React.FC<PROPS> = (props) => {
             });
         }
       );
-    } else if (task === "") {
-      alert("タスクを入力してください");
     } else {
-      setChangeModal(false);
       db.collection("plan")
         .doc(props.planId)
         .collection("task")
-        .add({ task: task });
-      setChangeModal(true);
+        .add({ name: task });
     }
     setTask("");
     setTaskImage(null);
-    setChangeModal(false);
+    setChangeModal(true);
   };
 
   // taskImageで追加された値を保存
@@ -137,29 +131,28 @@ const TaskList: React.FC<PROPS> = (props) => {
 
   // リファクタリング
   // 渡ってきたindexに該当する番号だけを表示したい
-  const onClickEditTask = async (index: number) => {
-    if (openEditTask === false) {
-      setOpenEditTask(true);
-      // 配列内からindex番号を取得し格納
-      setClickPlansTask({
-        id: getPlansTask[index].id,
-        taskName: getPlansTask[index].tasksName,
-        taskImg: getPlansTask[index].taskImg,
-      });
-    } else {
-      setOpenEditTask(false);
-    }
+  const onClickEditTask = (index: number) => {
+    subModalState();
+    // 配列内からindex番号を取得し格納
+    setClickPlansTask({
+      id: getPlansTask[index].id,
+      taskName: getPlansTask[index].tasksName,
+      taskImg: getPlansTask[index].taskImg,
+    });
   };
 
   // Planの削除
   const deletePlan = () => {
     db.collection("plan").doc(props.planId).delete();
+    mainModalState();
     onClose();
     alert("削除しました");
   };
 
+  // modalを閉じる
   const closeModal = () => {
     onClose();
+    mainModalState();
   };
 
   return (
@@ -192,7 +185,6 @@ const TaskList: React.FC<PROPS> = (props) => {
                       </div>
                     ))}
                     <EditTask
-                      openEditTask={openEditTask}
                       planId={props.planId}
                       task={{
                         id: clickPlansTask.id,

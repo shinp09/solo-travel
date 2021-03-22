@@ -15,9 +15,9 @@ const Card: React.FC = () => {
       timestamp: "",
     },
   ]);
-  const [modal, setModal] = useState(false);
+
   const [getPlansId, setGetPlansId] = useState("");
-  const { mainModalOpen, mainModal } = useContext(MainModalContext);
+  const { mainModalState, mainModal } = useContext(MainModalContext);
 
   useEffect(() => {
     db.collection("plan").onSnapshot((snapshot) => {
@@ -34,9 +34,7 @@ const Card: React.FC = () => {
   }, []);
 
   const modalOpen = async (id: string) => {
-    setModal(!modal);
-    mainModalOpen();
-    console.log(modal);
+    mainModalState();
     setGetPlansId(id);
   };
 
@@ -69,7 +67,7 @@ const Card: React.FC = () => {
           ))}
         </WrapItem>
       </Wrap>
-      <TaskList modal={modal} planId={getPlansId} />
+      <TaskList planId={getPlansId} />
     </div>
   );
 };

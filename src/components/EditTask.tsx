@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   useDisclosure,
@@ -15,9 +15,8 @@ import {
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { db } from "../firebase";
-
+import { SubModalContext } from "./ContextProvider";
 interface PROPS {
-  openEditTask: boolean;
   planId: string;
   task: {
     id: string;
@@ -29,15 +28,11 @@ interface PROPS {
 const EditTask: React.FC<PROPS> = (props) => {
   const [changeTask, setChangeTask] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { subModalState, subModal } = useContext(SubModalContext);
 
   useEffect(() => {
-    if (props.openEditTask === true) {
-      onOpen();
-    } else {
-      // 閉じたらprops.openEditTaskの値をfalseにしたい
-      onClose();
-    }
-  }, [props.openEditTask]);
+    subModal ? onOpen() : onClose();
+  }, [subModal]);
 
   // 既存タスクを更新
   const editNewTask = () => {
@@ -46,8 +41,9 @@ const EditTask: React.FC<PROPS> = (props) => {
         .doc(props.planId)
         .collection("task")
         .doc(props.task.id)
-        .update({ task: changeTask });
+        .update({ name: changeTask });
       onClose();
+      subModalState();
     } else if (changeTask === "") {
       alert("タスクを入力してください");
     }
@@ -61,17 +57,19 @@ const EditTask: React.FC<PROPS> = (props) => {
       .doc(props.task.id)
       .delete();
     onClose();
+    subModalState();
     alert("削除しました");
   };
 
   const modalClose = () => {
     setChangeTask("");
+    subModalState();
     onClose();
   };
   return (
     <div>
       {/* propsで渡ってきたopenEditTaskがtrueの時に表示 */}
-      {props.openEditTask && (
+      {subModal && (
         <Modal isOpen={isOpen} onClose={onClose} size="xl">
           <ModalOverlay>
             <ModalContent>
@@ -79,7 +77,7 @@ const EditTask: React.FC<PROPS> = (props) => {
               <ModalCloseButton />
               <ModalBody pb={10}>
                 {props.task.taskName}
-                <Image src={props.task.taskImg} m={10} />
+                <Image src={props.task.taskImg} m={5} w="400px" h="300px" />
                 <FormControl>
                   <Input
                     placeholder="タスクの名前を入力してください"

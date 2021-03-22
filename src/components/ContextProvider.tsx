@@ -1,23 +1,34 @@
 import React, { useState } from "react";
 
 export const MainModalContext = React.createContext({
-  mainModalOpen: () => {},
+  mainModalState: () => {},
   mainModal: false,
 });
-export const subModalContext = React.createContext(false);
+export const SubModalContext = React.createContext({
+  subModalState: () => {},
+  subModal: false,
+});
 
 const ContextProvider: React.FC = (props) => {
   const [mainModal, setMainModal] = useState(false);
+  const [subModal, setSubModal] = useState(false);
 
-  const mainModalOpen = () => {
-    setMainModal(true);
-    console.log(mainModal);
+  const mainModalState = () => {
+    setMainModal(!mainModal);
+  };
+
+  const subModalState = () => {
+    setSubModal(!subModal);
   };
 
   return (
-    <MainModalContext.Provider value={{ mainModalOpen, mainModal }}>
-      {props.children}
-    </MainModalContext.Provider>
+    <>
+      <MainModalContext.Provider value={{ mainModalState, mainModal }}>
+        <SubModalContext.Provider value={{ subModalState, subModal }}>
+          {props.children}
+        </SubModalContext.Provider>
+      </MainModalContext.Provider>
+    </>
   );
 };
 
