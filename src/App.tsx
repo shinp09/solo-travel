@@ -5,18 +5,21 @@ import Home from "./components/Home";
 import ListView from "./components/ListView";
 import SignIn from "./components/Auth/SignIn";
 import Login from "./components/Auth/Login";
+import ContextProvider from "./components/ContextProvider";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/" component={Home}></Route>
-          <Route path="/ListView" component={ListView}></Route>
-          <Route path="/SignIn" component={SignIn}></Route>
-          <Route path="/Login" component={Login}></Route>
-        </Switch>
-      </BrowserRouter>
+      <ContextProvider>
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/" component={Home}></Route>
+            <Route path="/ListView" component={ListView}></Route>
+            <Route path="/SignIn" component={SignIn}></Route>
+            <Route path="/Login" component={Login}></Route>
+          </Switch>
+        </BrowserRouter>
+      </ContextProvider>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
 import firebase from "firebase/app";
@@ -18,7 +18,6 @@ import {
   Input,
   ModalFooter,
 } from "@chakra-ui/react";
-import { GrCamera } from "react-icons/gr";
 import Card from "./Card";
 
 interface Contents {
@@ -134,7 +133,6 @@ const Home: React.FC = (): JSX.Element => {
                     />
                   </FormControl>
                   <label>
-                    <GrCamera />
                     <input type="file" onChange={onChangeImageHandler} />
                   </label>
                 </ModalBody>

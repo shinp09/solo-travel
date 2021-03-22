@@ -11,6 +11,7 @@ import {
   ModalFooter,
   FormControl,
   Input,
+  Image,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { db } from "../firebase";
@@ -21,6 +22,7 @@ interface PROPS {
   task: {
     id: string;
     taskName: string;
+    taskImg: string;
   };
 }
 
@@ -77,6 +79,7 @@ const EditTask: React.FC<PROPS> = (props) => {
               <ModalCloseButton />
               <ModalBody pb={10}>
                 {props.task.taskName}
+                <Image src={props.task.taskImg} m={10} />
                 <FormControl>
                   <Input
                     placeholder="タスクの名前を入力してください"
