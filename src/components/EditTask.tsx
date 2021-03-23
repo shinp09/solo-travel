@@ -69,7 +69,7 @@ const EditTask: React.FC<PROPS> = (props) => {
     <div>
       {/* propsで渡ってきたopenEditTaskがtrueの時に表示 */}
       {subModal && (
-        <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <Modal isOpen={isOpen} onClose={modalClose} size="xl">
           <ModalOverlay>
             <ModalContent>
               <ModalHeader>タスクの詳細</ModalHeader>

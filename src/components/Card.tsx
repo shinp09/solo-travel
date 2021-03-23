@@ -17,7 +17,7 @@ const Card: React.FC = () => {
   ]);
 
   const [getPlansId, setGetPlansId] = useState("");
-  const { mainModalState, mainModal } = useContext(MainModalContext);
+  const { mainModalState } = useContext(MainModalContext);
 
   useEffect(() => {
     db.collection("plan").onSnapshot((snapshot) => {
@@ -48,13 +48,14 @@ const Card: React.FC = () => {
               className={style.card}
               onClick={() => modalOpen(plan.id)}
             >
-              <Box maxW="sm" borderWidth="2px" borderRadius="5">
+              {/* <Box> */}
+              <Box maxW="260px">
                 <Image
-                  width="250px"
-                  height="150px"
+                  width="100%"
+                  height="160px"
                   src={plan.image}
                   alt=""
-                  p="10px"
+                  borderRadius="5"
                 />
                 <Center w="100%" h="30px">
                   <h2>{plan.title}</h2>

@@ -17,9 +17,14 @@ import {
 } from "@chakra-ui/react";
 import style from "./TaskList.module.scss";
 import EditTask from "./EditTask";
-import { MainModalContext, SubModalContext } from "./ContextProvider";
+import {
+  MainModalContext,
+  SubModalContext,
+  DeleteDialogContext,
+} from "./ContextProvider";
 import firebase from "firebase/app";
 import { db, storage } from "../firebase";
+import DeleteDialog from "./DeleteDialog";
 
 interface PROPS {
   planId: string;
@@ -44,6 +49,7 @@ const TaskList: React.FC<PROPS> = (props) => {
   const [taskImage, setTaskImage] = useState<File | null>(null);
   const { mainModalState, mainModal } = useContext(MainModalContext);
   const { subModalState } = useContext(SubModalContext);
+  const { deleteDialogState, deleteDialog } = useContext(DeleteDialogContext);
 
   // 初回は値が反映されずモーダルが開く
   // モーダルを閉じて再度開くと値が取得できている
@@ -141,18 +147,18 @@ const TaskList: React.FC<PROPS> = (props) => {
     });
   };
 
-  // Planの削除
-  const deletePlan = () => {
-    db.collection("plan").doc(props.planId).delete();
-    mainModalState();
-    onClose();
-    alert("削除しました");
+  // useCOntext内のdeleteDialogStateをtrueに変更
+  const deleteDialogStateChange = () => {
+    deleteDialogState();
   };
 
   // modalを閉じる
   const closeModal = () => {
     onClose();
     mainModalState();
+    if (changeModal === false) {
+      setChangeModal(true);
+    }
   };
 
   return (
@@ -160,11 +166,10 @@ const TaskList: React.FC<PROPS> = (props) => {
       <form>
         <ChakraProvider>
           {changeModal ? (
-            <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+            <Modal isOpen={isOpen} onClose={closeModal} size="3xl">
               <ModalOverlay>
                 <ModalContent>
                   <ModalHeader>タスク一覧</ModalHeader>
-                  <ModalCloseButton />
                   <ModalBody className={style.container}>
                     {getPlansTask.map((task, index) => (
                       <div key={task.id}>
@@ -194,9 +199,10 @@ const TaskList: React.FC<PROPS> = (props) => {
                     />
                   </ModalBody>
                   <ModalFooter>
-                    <Button mr={4} onClick={deletePlan}>
+                    <Button mr={4} onClick={deleteDialogStateChange}>
                       プランを削除
                     </Button>
+                    <DeleteDialog />
                     <Button
                       colorScheme="pink"
                       mr={4}
@@ -210,11 +216,10 @@ const TaskList: React.FC<PROPS> = (props) => {
               </ModalOverlay>
             </Modal>
           ) : (
-            <Modal isOpen={isOpen} onClose={onClose} size="xl">
+            <Modal isOpen={isOpen} onClose={closeModal} size="xl">
               <ModalOverlay>
                 <ModalContent>
                   <ModalHeader>タスクの作成</ModalHeader>
-                  <ModalCloseButton />
                   <ModalBody pb={10}>
                     <FormControl>
                       <Input

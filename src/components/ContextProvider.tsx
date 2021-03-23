@@ -9,9 +9,15 @@ export const SubModalContext = React.createContext({
   subModal: false,
 });
 
+export const DeleteDialogContext = React.createContext({
+  deleteDialogState: () => {},
+  deleteDialog: false,
+});
+
 const ContextProvider: React.FC = (props) => {
   const [mainModal, setMainModal] = useState(false);
   const [subModal, setSubModal] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
 
   const mainModalState = () => {
     setMainModal(!mainModal);
@@ -21,11 +27,19 @@ const ContextProvider: React.FC = (props) => {
     setSubModal(!subModal);
   };
 
+  const deleteDialogState = () => {
+    setDeleteDialog(!deleteDialog);
+  };
+
   return (
     <>
       <MainModalContext.Provider value={{ mainModalState, mainModal }}>
         <SubModalContext.Provider value={{ subModalState, subModal }}>
-          {props.children}
+          <DeleteDialogContext.Provider
+            value={{ deleteDialogState, deleteDialog }}
+          >
+            {props.children}
+          </DeleteDialogContext.Provider>
         </SubModalContext.Provider>
       </MainModalContext.Provider>
     </>
