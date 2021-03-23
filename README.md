@@ -1,6 +1,6 @@
 # Planding-solotravel
 
-旅行の計画・思い出保存ができるアプリです。
+旅行の計画・思い出が保存できるアプリです。
 ※開発中
 
 https://planding-solotrip.web.app/

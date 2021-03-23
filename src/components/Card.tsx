@@ -3,7 +3,7 @@ import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
-import { MainModalContext } from "./ContextProvider";
+import { MainModalContext, EditPlanIdContext } from "./ContextProvider";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
@@ -15,9 +15,8 @@ const Card: React.FC = () => {
       timestamp: "",
     },
   ]);
-
-  const [getPlansId, setGetPlansId] = useState("");
-  const { mainModalState, mainModal } = useContext(MainModalContext);
+  const { mainModalState } = useContext(MainModalContext);
+  const { editPlanIdState } = useContext(EditPlanIdContext);
 
   useEffect(() => {
     db.collection("plan").onSnapshot((snapshot) => {
@@ -35,7 +34,7 @@ const Card: React.FC = () => {
 
   const modalOpen = async (id: string) => {
     mainModalState();
-    setGetPlansId(id);
+    editPlanIdState(id);
   };
 
   return (
@@ -48,13 +47,14 @@ const Card: React.FC = () => {
               className={style.card}
               onClick={() => modalOpen(plan.id)}
             >
-              <Box maxW="sm" borderWidth="2px" borderRadius="5">
+              {/* <Box> */}
+              <Box maxW="260px">
                 <Image
-                  width="250px"
-                  height="150px"
+                  width="100%"
+                  height="160px"
                   src={plan.image}
                   alt=""
-                  p="10px"
+                  borderRadius="5"
                 />
                 <Center w="100%" h="30px">
                   <h2>{plan.title}</h2>
@@ -67,7 +67,7 @@ const Card: React.FC = () => {
           ))}
         </WrapItem>
       </Wrap>
-      <TaskList planId={getPlansId} />
+      <TaskList />
     </div>
   );
 };

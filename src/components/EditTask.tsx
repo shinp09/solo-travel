@@ -12,11 +12,15 @@ import {
   Input,
   Image,
 } from "@chakra-ui/react";
-import { DeleteIcon } from "@chakra-ui/icons";
 import { db } from "../firebase";
-import { SubModalContext } from "./ContextProvider";
+import {
+  SubModalContext,
+  DeleteDialogContext,
+  EditPlanIdContext,
+} from "./ContextProvider";
+import DeleteDialog from "./DeleteDialog";
+
 interface PROPS {
-  planId: string;
   task: {
     id: string;
     taskName: string;
@@ -28,6 +32,8 @@ const EditTask: React.FC<PROPS> = (props) => {
   const [changeTask, setChangeTask] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { subModalState, subModal } = useContext(SubModalContext);
+  const { deleteDialogState } = useContext(DeleteDialogContext);
+  const { editPlanId } = useContext(EditPlanIdContext);
 
   useEffect(() => {
     subModal ? onOpen() : onClose();
@@ -35,29 +41,23 @@ const EditTask: React.FC<PROPS> = (props) => {
 
   // 既存タスクを更新
   const editNewTask = () => {
-    if (changeTask) {
+    if (changeTask === "") {
+      alert("タスクを入力してください");
+    } else {
       db.collection("plan")
-        .doc(props.planId)
+        .doc(editPlanId)
         .collection("task")
         .doc(props.task.id)
         .update({ name: changeTask });
       onClose();
       subModalState();
-    } else if (changeTask === "") {
-      alert("タスクを入力してください");
     }
   };
 
   // taskの削除
-  const deleteTask = () => {
-    db.collection("plan")
-      .doc(props.planId)
-      .collection("task")
-      .doc(props.task.id)
-      .delete();
-    onClose();
+  const deleteDialogStateChange = () => {
+    deleteDialogState();
     subModalState();
-    alert("削除しました");
   };
 
   const modalClose = () => {
@@ -67,9 +67,9 @@ const EditTask: React.FC<PROPS> = (props) => {
   };
   return (
     <div>
-      {/* propsで渡ってきたopenEditTaskがtrueの時に表示 */}
+      {/* subModalがtrueの時に表示 */}
       {subModal && (
-        <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <Modal isOpen={isOpen} onClose={modalClose} size="xl">
           <ModalOverlay>
             <ModalContent>
               <ModalHeader>タスクの詳細</ModalHeader>
@@ -84,8 +84,9 @@ const EditTask: React.FC<PROPS> = (props) => {
                 </FormControl>
               </ModalBody>
               <ModalFooter>
-                <Button mr={4} onClick={deleteTask}>
-                  <DeleteIcon />
+                <Button mr={4} onClick={deleteDialogStateChange}>
+                  タスクを削除
+                  <DeleteDialog />
                 </Button>
                 <Button colorScheme="pink" mr={4} onClick={editNewTask}>
                   変更を保存
