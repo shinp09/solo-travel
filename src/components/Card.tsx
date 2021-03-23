@@ -3,7 +3,7 @@ import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
-import { MainModalContext } from "./ContextProvider";
+import { MainModalContext, EditPlanIdContext } from "./ContextProvider";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
@@ -15,9 +15,8 @@ const Card: React.FC = () => {
       timestamp: "",
     },
   ]);
-
-  const [getPlansId, setGetPlansId] = useState("");
   const { mainModalState } = useContext(MainModalContext);
+  const { editPlanIdState } = useContext(EditPlanIdContext);
 
   useEffect(() => {
     db.collection("plan").onSnapshot((snapshot) => {
@@ -35,7 +34,7 @@ const Card: React.FC = () => {
 
   const modalOpen = async (id: string) => {
     mainModalState();
-    setGetPlansId(id);
+    editPlanIdState(id);
   };
 
   return (
@@ -68,7 +67,7 @@ const Card: React.FC = () => {
           ))}
         </WrapItem>
       </Wrap>
-      <TaskList planId={getPlansId} />
+      <TaskList />
     </div>
   );
 };

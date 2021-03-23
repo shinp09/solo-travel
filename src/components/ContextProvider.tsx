@@ -14,10 +14,16 @@ export const DeleteDialogContext = React.createContext({
   deleteDialog: false,
 });
 
+export const EditPlanIdContext = React.createContext({
+  editPlanIdState: (id: string) => {},
+  editPlanId: "",
+});
+
 const ContextProvider: React.FC = (props) => {
   const [mainModal, setMainModal] = useState(false);
   const [subModal, setSubModal] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
+  const [editPlanId, setEditPlanId] = useState("");
 
   const mainModalState = () => {
     setMainModal(!mainModal);
@@ -31,6 +37,10 @@ const ContextProvider: React.FC = (props) => {
     setDeleteDialog(!deleteDialog);
   };
 
+  const editPlanIdState = (id: string) => {
+    setEditPlanId(id);
+  };
+
   return (
     <>
       <MainModalContext.Provider value={{ mainModalState, mainModal }}>
@@ -38,7 +48,9 @@ const ContextProvider: React.FC = (props) => {
           <DeleteDialogContext.Provider
             value={{ deleteDialogState, deleteDialog }}
           >
-            {props.children}
+            <EditPlanIdContext.Provider value={{ editPlanIdState, editPlanId }}>
+              {props.children}
+            </EditPlanIdContext.Provider>
           </DeleteDialogContext.Provider>
         </SubModalContext.Provider>
       </MainModalContext.Provider>

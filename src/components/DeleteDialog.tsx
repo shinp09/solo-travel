@@ -1,25 +1,34 @@
 import React, { useContext, useEffect } from "react";
 import {
   AlertDialog,
-  AlertDialogBody,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
-  AlertDialogCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import { DeleteDialogContext, MainModalContext } from "./ContextProvider";
-import { db, storage } from "../firebase";
+import {
+  DeleteDialogContext,
+  MainModalContext,
+  EditPlanIdContext,
+} from "./ContextProvider";
+import { db } from "../firebase";
 
-const DeleteDialog: React.FC = () => {
+interface PROPS {
+  task?: {
+    id: string;
+  };
+}
+
+const DeleteDialog: React.FC<PROPS> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { deleteDialogState, deleteDialog } = useContext(DeleteDialogContext);
-  const { mainModalState, mainModal } = useContext(MainModalContext);
+  const { mainModalState } = useContext(MainModalContext);
+  const { editPlanId } = useContext(EditPlanIdContext);
 
   useEffect(() => {
-    deleteDialog && onOpen();
+    deleteDialog ? onOpen() : onClose();
   }, [deleteDialog]);
 
   const closeDialog = () => {
@@ -30,10 +39,20 @@ const DeleteDialog: React.FC = () => {
   //   planの削除
   //   planIDをグローバルな値にする
   const deletePlan = () => {
-    // db.collection("plan").doc(props.planId).delete();
-    // mainModalState();
-    // onClose();
-    alert("削除しました");
+    if (props.task?.id) {
+      db.collection("plan")
+        .doc(editPlanId)
+        .collection("task")
+        .doc(props.task?.id)
+        .delete();
+      onClose();
+      deleteDialogState();
+    } else {
+      db.collection("plan").doc(editPlanId).delete();
+      deleteDialogState();
+      mainModalState();
+      onClose();
+    }
   };
 
   return (
