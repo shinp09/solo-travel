@@ -10,4 +10,5 @@ https://planding-solotrip.web.app/
 - React
 - TypeScript
 - Sass
-- Firebase(Hosting, Cloud Firestore)
+- Chakra UI
+- Firebase(Hosting, Cloud Firestore, Authentication)
