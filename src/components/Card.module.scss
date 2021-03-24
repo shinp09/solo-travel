@@ -1,17 +1,28 @@
 .conteiner {
   margin: 0 auto;
+  position: relative;
   .card {
     padding: 6px;
+    font-size: 0;
     &:hover {
       transition: 0.5s;
       opacity: 0.6;
-    }
-    div {
-      margin: 0;
-      padding: 0;
-    }
-    h2 {
-      overflow-wrap: break-word;
+      .underBox {
+        font-weight: 600;
+        letter-spacing: 1px;
+        font-size: 14px;
+        overflow-wrap: break-word;
+        position: absolute;
+        top: 0;
+        margin: 0;
+        padding: 16px 24px;
+        box-sizing: border-box;
+        color: #fff;
+        background-color: #ff385c;
+        transform: none;
+        transition: 0.4s;
+        border-radius: 2px;
+      }
     }
   }
 }

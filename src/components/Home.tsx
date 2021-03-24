@@ -104,7 +104,7 @@ const Home: React.FC = (): JSX.Element => {
           <Modal isOpen={isOpen} onClose={onClose} size="5xl">
             <ModalOverlay>
               <ModalContent>
-                <ModalHeader>カードの作成</ModalHeader>
+                <ModalHeader>プランを作成</ModalHeader>
                 <ModalBody pb={6}>
                   <FormControl>
                     <FormLabel>名前</FormLabel>

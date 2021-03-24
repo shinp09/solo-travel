@@ -42,7 +42,7 @@ const EditTask: React.FC<PROPS> = (props) => {
   // 既存タスクを更新
   const editNewTask = () => {
     if (changeTask === "") {
-      alert("タスクを入力してください");
+      alert("変更内容を入力してください");
     } else {
       db.collection("plan")
         .doc(editPlanId)
@@ -78,7 +78,7 @@ const EditTask: React.FC<PROPS> = (props) => {
                 <Image src={props.task.taskImg} m={5} w="400px" h="300px" />
                 <FormControl>
                   <Input
-                    placeholder="タスクの名前を入力してください"
+                    placeholder="変更内容を入力してください"
                     onChange={(e) => setChangeTask(e.target.value)}
                   />
                 </FormControl>

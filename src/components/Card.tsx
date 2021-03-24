@@ -56,12 +56,12 @@ const Card: React.FC = () => {
                   alt=""
                   borderRadius="5"
                 />
-                <Center w="100%" h="30px">
-                  <h2>{plan.title}</h2>
-                </Center>
-                <Center w="100%" h="30px">
-                  <h2>{plan.contents}</h2>
-                </Center>
+                <div className={style.underBox}>
+                  <h2>
+                    {plan.title}
+                    {/* {plan.contents} */}
+                  </h2>
+                </div>
               </Box>
             </div>
           ))}
