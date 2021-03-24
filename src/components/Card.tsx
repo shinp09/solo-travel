@@ -48,7 +48,7 @@ const Card: React.FC = () => {
               onClick={() => modalOpen(plan.id)}
             >
               {/* <Box> */}
-              <Box maxW="260px">
+              <Box maxW="260px" h="160px">
                 <Image
                   width="100%"
                   height="160px"

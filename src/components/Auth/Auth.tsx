@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "firebase/firestore";
 import { auth, provider } from "../../firebase";
+import { useHistory } from "react-router-dom";
 import style from "./Auth.module.scss";
+import { UserContext } from "../ContextProvider";
 import {
   ChakraProvider,
   Flex,
@@ -14,20 +16,19 @@ import {
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
+
 const AuthProvider: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIslogin] = useState(true);
   const [createUser, setCreateUser] = useState(false);
+  const { loginUserState } = useContext(UserContext);
+  const history = useHistory();
 
   // Emailでloginするための関数
   const loginEmail = async () => {
     await auth.signInWithEmailAndPassword(email, password);
-  };
-
-  //   Googleアカウントでのログイン
-  const signInGoogle = async () => {
-    await auth.signInWithPopup(provider).catch((err) => alert(err.message));
+    history.push(`/`);
   };
 
   // バリデーションの強化
@@ -40,7 +41,11 @@ const AuthProvider: React.FC = () => {
 
   // ゲストログイン
   const guestLogin = async () => {
-    await auth.signInWithEmailAndPassword("guest@test.com", "00000000000");
+    const email = "guest@gmail.com";
+    const password = "00000000000sA";
+    await auth.signInWithEmailAndPassword(email, password);
+    loginUserState(email, password);
+    history.push(`/`);
   };
 
   return (
@@ -67,7 +72,9 @@ const AuthProvider: React.FC = () => {
                     <Input
                       type="email"
                       placeholder="test@test.com"
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setEmail(e.target.value)
+                      }
                     />
                   </FormControl>
                   <FormControl mt={6}>
@@ -75,7 +82,9 @@ const AuthProvider: React.FC = () => {
                     <Input
                       type="password"
                       placeholder="*******"
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setPassword(e.target.value)
+                      }
                     />
                   </FormControl>
                   <Button
@@ -104,7 +113,6 @@ const AuthProvider: React.FC = () => {
                   Guest Login
                 </Button>
               </Box>
-              <Button onClick={signInGoogle}>SignIn with Google</Button>
             </Box>
           </Flex>
         ) : (
@@ -120,7 +128,9 @@ const AuthProvider: React.FC = () => {
                     <Input
                       type="email"
                       placeholder="test@test.com"
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setEmail(e.target.value)
+                      }
                     />
                   </FormControl>
                   <FormControl mt={6}>
@@ -128,7 +138,9 @@ const AuthProvider: React.FC = () => {
                     <Input
                       type="password"
                       placeholder="*******"
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setPassword(e.target.value)
+                      }
                     />
                   </FormControl>
                   <Button
