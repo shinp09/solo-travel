@@ -107,7 +107,7 @@ const Home: React.FC = (): JSX.Element => {
     <div className={style.container}>
       {user ? (
         <div>
-          <h2>ログイン : {user.email}</h2>
+          <h2>ログイン中 : {user.userName}</h2>
           <h2 onClick={logoutUserState}>ログアウト</h2>
         </div>
       ) : (

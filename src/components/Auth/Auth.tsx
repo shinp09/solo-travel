@@ -20,6 +20,7 @@ import {
 const AuthProvider: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userName, setUserName] = useState("");
   const [isLogin, setIslogin] = useState(true);
   const [createUser, setCreateUser] = useState(false);
   const { loginUserState } = useContext(UserContext);
@@ -28,6 +29,7 @@ const AuthProvider: React.FC = () => {
   // Emailでloginするための関数
   const loginEmail = async () => {
     await auth.signInWithEmailAndPassword(email, password);
+    loginUserState(userName, email, password);
     history.push(`/`);
   };
 
@@ -41,10 +43,11 @@ const AuthProvider: React.FC = () => {
 
   // ゲストログイン
   const guestLogin = async () => {
+    const userName = "ゲストユーザー";
     const email = "guest@gmail.com";
     const password = "00000000000sA";
     await auth.signInWithEmailAndPassword(email, password);
-    loginUserState(email, password);
+    loginUserState(userName, email, password);
     history.push(`/`);
   };
 
@@ -123,6 +126,16 @@ const AuthProvider: React.FC = () => {
               </Box>
               <Box my={4} textAlign="left">
                 <form>
+                  <FormControl>
+                    <FormLabel>User Name</FormLabel>
+                    <Input
+                      type="name"
+                      placeholder="username"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setUserName(e.target.value)
+                      }
+                    />
+                  </FormControl>
                   <FormControl>
                     <FormLabel>Email</FormLabel>
                     <Input

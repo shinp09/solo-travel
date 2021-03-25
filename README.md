@@ -8,6 +8,7 @@ https://planding-solotrip.web.app/
 ## 使用技術
 
 - React
+- React Hooks(useState, useEffect, useContext)
 - TypeScript
 - Sass
 - Chakra UI
