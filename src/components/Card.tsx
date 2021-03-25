@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
-import { Box, Wrap, WrapItem, Center, Image } from "@chakra-ui/react";
+import { Box, Wrap, WrapItem, Image } from "@chakra-ui/react";
 import { MainModalContext, EditPlanIdContext } from "./ContextProvider";
 
 const Card: React.FC = () => {
@@ -47,8 +47,7 @@ const Card: React.FC = () => {
               className={style.card}
               onClick={() => modalOpen(plan.id)}
             >
-              {/* <Box> */}
-              <Box maxW="260px">
+              <Box maxW="260px" h="160px">
                 <Image
                   width="100%"
                   height="160px"
@@ -57,10 +56,7 @@ const Card: React.FC = () => {
                   borderRadius="5"
                 />
                 <div className={style.underBox}>
-                  <h2>
-                    {plan.title}
-                    {/* {plan.contents} */}
-                  </h2>
+                  <h2>{plan.title}</h2>
                 </div>
               </Box>
             </div>

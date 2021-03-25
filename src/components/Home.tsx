@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
 import firebase from "firebase/app";
 import { db, storage } from "../firebase";
+import { useHistory } from "react-router-dom";
+import { UserContext } from "./ContextProvider";
 import {
   Button,
   ChakraProvider,
@@ -31,6 +33,16 @@ const Home: React.FC = (): JSX.Element => {
     contents: "",
   });
   const [planImage, setPlanImage] = useState<File | null>(null);
+  const { user, logoutUserState } = useContext(UserContext);
+  const history = useHistory();
+
+  // userの情報がなかった時はAuthに遷移
+  // unmount時の処理を追加
+  // useEffect(() => {
+  //   if (user.email === "") {
+  //     history.push(`/Auth`);
+  //   }
+  // }, [user]);
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
@@ -93,6 +105,14 @@ const Home: React.FC = (): JSX.Element => {
 
   return (
     <div className={style.container}>
+      {user ? (
+        <div>
+          <h2>ログイン中 : {user.userName}</h2>
+          <h2 onClick={logoutUserState}>ログアウト</h2>
+        </div>
+      ) : (
+        ""
+      )}
       <h1>
         Planding a <span>solo</span> trip
       </h1>

@@ -19,11 +19,26 @@ export const EditPlanIdContext = React.createContext({
   editPlanId: "",
 });
 
+export const UserContext = React.createContext({
+  loginUserState: (userName: string, email: string, password: string) => {},
+  logoutUserState: () => {},
+  user: {
+    userName: "",
+    email: "",
+    password: "",
+  },
+});
+
 const ContextProvider: React.FC = (props) => {
   const [mainModal, setMainModal] = useState(false);
   const [subModal, setSubModal] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [editPlanId, setEditPlanId] = useState("");
+  const [user, setUser] = useState({
+    userName: "",
+    email: "",
+    password: "",
+  });
 
   const mainModalState = () => {
     setMainModal(!mainModal);
@@ -41,6 +56,28 @@ const ContextProvider: React.FC = (props) => {
     setEditPlanId(id);
   };
 
+  // login状態を保存
+  const loginUserState = (
+    userName: string,
+    email: string,
+    password: string
+  ) => {
+    console.log(email, password);
+    setUser({
+      userName: userName,
+      email: email,
+      password: password,
+    });
+  };
+
+  const logoutUserState = () => {
+    setUser({
+      userName: "",
+      email: "",
+      password: "",
+    });
+  };
+
   return (
     <>
       <MainModalContext.Provider value={{ mainModalState, mainModal }}>
@@ -49,7 +86,11 @@ const ContextProvider: React.FC = (props) => {
             value={{ deleteDialogState, deleteDialog }}
           >
             <EditPlanIdContext.Provider value={{ editPlanIdState, editPlanId }}>
-              {props.children}
+              <UserContext.Provider
+                value={{ loginUserState, user, logoutUserState }}
+              >
+                {props.children}
+              </UserContext.Provider>
             </EditPlanIdContext.Provider>
           </DeleteDialogContext.Provider>
         </SubModalContext.Provider>

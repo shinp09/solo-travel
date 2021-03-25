@@ -8,6 +8,8 @@ https://planding-solotrip.web.app/
 ## 使用技術
 
 - React
+- React Hooks(useState, useEffect, useContext)
 - TypeScript
 - Sass
-- Firebase(Hosting, Cloud Firestore)
+- Chakra UI
+- Firebase(Hosting, Cloud Firestore, Authentication)

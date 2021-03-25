@@ -1,9 +1,10 @@
 .container {
   background-color: #ffffff;
-  width: 50%;
-  height: 50vh;
-  flex-direction: column;
-  margin: 0 auto;
-  display: flex;
+  width: 50vh;
+  height: 70vh;
+  text-align: center;
   vertical-align: middle;
+  .createAcount {
+    transition: 0.5;
+  }
 }
