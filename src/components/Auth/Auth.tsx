@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
-import "firebase/firestore";
-import { auth, provider } from "../../firebase";
+import firebase from "firebase/app";
+import { auth, provider, db, storage } from "../../firebase";
 import { useHistory } from "react-router-dom";
 import style from "./Auth.module.scss";
 import { UserContext } from "../ContextProvider";
@@ -27,18 +27,24 @@ const AuthProvider: React.FC = () => {
   const history = useHistory();
 
   // Emailでloginするための関数
+  // データが取得できていない
   const loginEmail = async () => {
     await auth.signInWithEmailAndPassword(email, password);
-    loginUserState(userName, email, password);
-    history.push(`/`);
+    await db.collection("user").doc("fkK3xbI4x5QfYHFp72Zg").get();
+    console.log(test);
+    // history.push(`/`);
   };
 
   // バリデーションの強化
   const signUpEmail = async () => {
     await auth.createUserWithEmailAndPassword(email, password);
+    db.collection("user").add({
+      userName: userName,
+      email: email,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
     setIslogin(true);
     setCreateUser(true);
-    console.log("ok");
   };
 
   // ゲストログイン
@@ -47,7 +53,7 @@ const AuthProvider: React.FC = () => {
     const email = "guest@gmail.com";
     const password = "00000000000sA";
     await auth.signInWithEmailAndPassword(email, password);
-    loginUserState(userName, email, password);
+    loginUserState(userName, email);
     history.push(`/`);
   };
 

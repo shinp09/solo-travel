@@ -74,6 +74,7 @@ const Home: React.FC = (): JSX.Element => {
             .getDownloadURL()
             .then(async (url) => {
               await db.collection("plan").add({
+                userName: user.userName,
                 title: posts.title,
                 image: url,
                 contents: posts.contents,
@@ -85,6 +86,7 @@ const Home: React.FC = (): JSX.Element => {
       // imageがない場合は、他情報のみDBに保存
     } else {
       db.collection("plan").add({
+        userName: user.userName,
         title: posts.title,
         image: "",
         contents: posts.contents,

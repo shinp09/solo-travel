@@ -3,11 +3,16 @@ import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Image } from "@chakra-ui/react";
-import { MainModalContext, EditPlanIdContext } from "./ContextProvider";
+import {
+  MainModalContext,
+  EditPlanIdContext,
+  UserContext,
+} from "./ContextProvider";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
     {
+      userName: "",
       id: "",
       title: "",
       contents: "",
@@ -17,20 +22,23 @@ const Card: React.FC = () => {
   ]);
   const { mainModalState } = useContext(MainModalContext);
   const { editPlanIdState } = useContext(EditPlanIdContext);
+  const { user, logoutUserState } = useContext(UserContext);
 
   useEffect(() => {
-    db.collection("plan").onSnapshot((snapshot) => {
-      setPlans(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          title: doc.data().title,
-          contents: doc.data().contents,
-          image: doc.data().image,
-          timestamp: doc.data().timestamp,
-        }))
-      );
-    });
-  }, []);
+    if (user.userName)
+      db.collection("plan").onSnapshot((snapshot) => {
+        setPlans(
+          snapshot.docs.map((doc) => ({
+            userName: doc.data().userName,
+            id: doc.id,
+            title: doc.data().title,
+            contents: doc.data().contents,
+            image: doc.data().image,
+            timestamp: doc.data().timestamp,
+          }))
+        );
+      });
+  }, [user]);
 
   const modalOpen = (id: string) => {
     mainModalState();

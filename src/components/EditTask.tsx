@@ -36,6 +36,7 @@ const EditTask: React.FC<PROPS> = (props) => {
   const { deleteDialogState } = useContext(DeleteDialogContext);
   const { editPlanId } = useContext(EditPlanIdContext);
   const [editForm, setEditForm] = useState(false);
+  const [editTaskImg, setEditTaskImg] = useState<File | null>(null);
 
   useEffect(() => {
     subModal ? onOpen() : onClose();
@@ -70,10 +71,17 @@ const EditTask: React.FC<PROPS> = (props) => {
     subModalState();
     onClose();
   };
+
+  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setEditTaskImg(e.target.files[0]);
+    }
+  };
+
   return (
     <div>
       {/* subModalがtrueの時に表示 */}
-      {/* リファクタリン - 記述を減らせそう- */}
+      {/* リファクタリング - 記述を減らせそう- */}
       {subModal && (
         <Modal isOpen={isOpen} onClose={modalClose} size="xl">
           <ModalOverlay>
@@ -102,23 +110,13 @@ const EditTask: React.FC<PROPS> = (props) => {
                       placeholder="変更内容を入力してください"
                       onChange={(e) => setChangeTask(e.target.value)}
                     />
+                    {/* 画像の変更 */}
+                    <input type="file" onChange={onChangeImageHandler} />
                   </FormControl>
                 )}
               </ModalBody>
               <ModalFooter>
                 {editForm ? (
-                  ""
-                ) : (
-                  <Button
-                    colorScheme="pink"
-                    mr={4}
-                    onClick={() => setEditForm(!editForm)}
-                  >
-                    編集
-                    <DeleteDialog />
-                  </Button>
-                )}
-                {editForm && (
                   <>
                     <Button mr={4} onClick={deleteDialogStateChange}>
                       削除
@@ -127,9 +125,21 @@ const EditTask: React.FC<PROPS> = (props) => {
                     <Button colorScheme="pink" mr={4} onClick={editNewTask}>
                       変更を保存
                     </Button>
+                    <Button onClick={() => setEditForm(!editForm)}>戻る</Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      colorScheme="pink"
+                      mr={4}
+                      onClick={() => setEditForm(!editForm)}
+                    >
+                      編集
+                      <DeleteDialog />
+                    </Button>
+                    <Button onClick={modalClose}>戻る</Button>
                   </>
                 )}
-                <Button onClick={modalClose}>戻る</Button>
               </ModalFooter>
             </ModalContent>
           </ModalOverlay>
