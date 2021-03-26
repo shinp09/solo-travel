@@ -32,7 +32,7 @@ const Card: React.FC = () => {
     });
   }, []);
 
-  const modalOpen = async (id: string) => {
+  const modalOpen = (id: string) => {
     mainModalState();
     editPlanIdState(id);
   };

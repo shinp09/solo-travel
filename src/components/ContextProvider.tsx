@@ -62,7 +62,6 @@ const ContextProvider: React.FC = (props) => {
     email: string,
     password: string
   ) => {
-    console.log(email, password);
     setUser({
       userName: userName,
       email: email,
