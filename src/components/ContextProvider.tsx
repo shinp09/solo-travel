@@ -20,12 +20,11 @@ export const EditPlanIdContext = React.createContext({
 });
 
 export const UserContext = React.createContext({
-  loginUserState: (userName: string, email: string, password: string) => {},
+  loginUserState: (userName: string, email: string) => {},
   logoutUserState: () => {},
   user: {
     userName: "",
     email: "",
-    password: "",
   },
 });
 
@@ -37,7 +36,6 @@ const ContextProvider: React.FC = (props) => {
   const [user, setUser] = useState({
     userName: "",
     email: "",
-    password: "",
   });
 
   const mainModalState = () => {
@@ -57,16 +55,10 @@ const ContextProvider: React.FC = (props) => {
   };
 
   // login状態を保存
-  const loginUserState = (
-    userName: string,
-    email: string,
-    password: string
-  ) => {
-    console.log(email, password);
+  const loginUserState = (userName: string, email: string) => {
     setUser({
       userName: userName,
       email: email,
-      password: password,
     });
   };
 
@@ -74,7 +66,6 @@ const ContextProvider: React.FC = (props) => {
     setUser({
       userName: "",
       email: "",
-      password: "",
     });
   };
 

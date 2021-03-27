@@ -3,11 +3,17 @@ import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
 import { Box, Wrap, WrapItem, Image } from "@chakra-ui/react";
-import { MainModalContext, EditPlanIdContext } from "./ContextProvider";
+import {
+  MainModalContext,
+  EditPlanIdContext,
+  UserContext,
+} from "./ContextProvider";
+import firebase from "firebase/app";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
     {
+      userName: "",
       id: "",
       title: "",
       contents: "",
@@ -17,22 +23,32 @@ const Card: React.FC = () => {
   ]);
   const { mainModalState } = useContext(MainModalContext);
   const { editPlanIdState } = useContext(EditPlanIdContext);
+  const { user } = useContext(UserContext);
 
+  // ログインユーザーが作成したプランを取得、表示
   useEffect(() => {
-    db.collection("plan").onSnapshot((snapshot) => {
-      setPlans(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          title: doc.data().title,
-          contents: doc.data().contents,
-          image: doc.data().image,
-          timestamp: doc.data().timestamp,
-        }))
-      );
-    });
-  }, []);
+    const loginUserData = firebase.auth().currentUser;
+    const getPlan = db
+      .collection("plan")
+      .where("uid", "==", loginUserData?.uid)
+      .onSnapshot((snapshot) => {
+        setPlans(
+          snapshot.docs.map((doc) => ({
+            userName: doc.data().userName,
+            id: doc.id,
+            title: doc.data().title,
+            contents: doc.data().contents,
+            image: doc.data().image,
+            timestamp: doc.data().timestamp,
+          }))
+        );
+      });
+    return () => {
+      getPlan();
+    };
+  }, [user]);
 
-  const modalOpen = async (id: string) => {
+  const modalOpen = (id: string) => {
     mainModalState();
     editPlanIdState(id);
   };
