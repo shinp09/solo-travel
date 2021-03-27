@@ -25,6 +25,7 @@ import {
 import firebase from "firebase/app";
 import { db, storage } from "../firebase";
 import DeleteDialog from "./DeleteDialog";
+import defaultImg from "./assets/default-img.png";
 
 const TaskList: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -115,10 +116,11 @@ const TaskList: React.FC = () => {
         }
       );
     } else {
-      db.collection("plan")
-        .doc(editPlanId)
-        .collection("task")
-        .add({ name: task });
+      db.collection("plan").doc(editPlanId).collection("task").add({
+        name: task,
+        image: defaultImg,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
     }
     setTask("");
     setTaskImage(null);
@@ -132,8 +134,6 @@ const TaskList: React.FC = () => {
     }
   };
 
-  // リファクタリング
-  // 渡ってきたindexに該当する番号だけを表示したい
   const onClickEditTask = (index: number) => {
     subModalState();
     // 配列内からindex番号を取得し格納

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import firebase from "firebase/app";
 import { auth, db } from "../../firebase";
 import { useHistory } from "react-router-dom";
@@ -28,37 +28,64 @@ const AuthProvider: React.FC = () => {
 
   // Emailでloginするための関数
   const loginEmail = async () => {
-    await auth.signInWithEmailAndPassword(email, password);
-    const user = firebase.auth().currentUser;
-    db.collection("user").doc(user?.uid).set({
-      userName: userName,
-      email: email,
-    });
-    loginUserState(userName, email);
-    history.push(`/`);
+    if (email === "" || password === "") {
+      alert("メールアドレスまたはパスワードを入力してください");
+    } else {
+      await auth
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+          const user = firebase.auth().currentUser;
+          db.collection("user").doc(user?.uid).set({
+            userName: userName,
+            email: email,
+          });
+        })
+        .then(() => {
+          loginUserState(userName, email);
+          history.push(`/`);
+        })
+        // errorメッセージの内容によってメッセージを変えたい
+        .catch((err) => {
+          alert(err.message);
+        });
+    }
   };
 
   // バリデーションの強化
   const signUpEmail = async () => {
-    await auth.createUserWithEmailAndPassword(email, password);
-    db.collection("user").doc("test").set({
-      userName: userName,
-      email: email,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    loginUserState(userName, email);
-    setIslogin(true);
-    setCreateUser(true);
+    if (email === "" || password === "") {
+      alert("メールアドレスまたはパスワードを入力してください");
+    } else {
+      await auth
+        .createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          db.collection("user").doc("test").set({
+            userName: userName,
+            email: email,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+        })
+        .then(() => {
+          loginUserState(userName, email);
+          setIslogin(true);
+          setCreateUser(true);
+        })
+        .catch((err) => {
+          alert(err.message);
+        });
+    }
   };
 
   // ゲストログイン
+  // 非同期処理に書き換え
   const guestLogin = async () => {
     const userName = "ゲストユーザー";
     const email = "guest@gmail.com";
     const password = "00000000000sA";
-    await auth.signInWithEmailAndPassword(email, password);
-    loginUserState(userName, email);
-    history.push(`/`);
+    await auth.signInWithEmailAndPassword(email, password).then(() => {
+      loginUserState(userName, email);
+      history.push(`/`);
+    });
   };
 
   return (
@@ -103,6 +130,7 @@ const AuthProvider: React.FC = () => {
                   <Button
                     variant="outline"
                     width="full"
+                    colorScheme="pink"
                     mt={4}
                     onClick={loginEmail}
                   >
