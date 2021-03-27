@@ -91,24 +91,28 @@ const AuthProvider: React.FC = () => {
   return (
     <div className={style.container}>
       <ChakraProvider>
-        {createUser ? (
+        {createUser && (
           <Alert status="success" className={style.createAcount}>
             <AlertIcon />
             アカウントが作成されました！
           </Alert>
-        ) : (
-          ""
+        )}
+        {createUser && (
+          <Alert status="error" className={style.createAcount}>
+            <AlertIcon />
+            ログアウトされました！
+          </Alert>
         )}
         {isLogin ? (
           <Flex width="full" align="center" justifyContent="center">
             <Box p={2}>
               <Box textAlign="center" m={10}>
-                <Heading>Login</Heading>
+                <Heading fontSize="2xl">ログイン</Heading>
               </Box>
               <Box my={4} textAlign="left">
                 <form>
-                  <FormControl>
-                    <FormLabel>Email</FormLabel>
+                  <FormControl mt={5}>
+                    <FormLabel fontSize="sm">メールアドレス</FormLabel>
                     <Input
                       type="email"
                       placeholder="test@test.com"
@@ -117,8 +121,8 @@ const AuthProvider: React.FC = () => {
                       }
                     />
                   </FormControl>
-                  <FormControl mt={6}>
-                    <FormLabel>Password</FormLabel>
+                  <FormControl mt={5}>
+                    <FormLabel fontSize="sm">パスワード</FormLabel>
                     <Input
                       type="password"
                       placeholder="*******"
@@ -129,29 +133,25 @@ const AuthProvider: React.FC = () => {
                   </FormControl>
                   <Button
                     variant="outline"
+                    className={style.btn}
                     width="full"
-                    colorScheme="pink"
-                    mt={4}
+                    color="white"
+                    mt={10}
                     onClick={loginEmail}
                   >
-                    Login
+                    ログイン
                   </Button>
                   <Button
                     variant="outline"
                     width="full"
-                    mt={4}
+                    mt={5}
                     onClick={() => setIslogin(false)}
                   >
-                    Signin
+                    アカウントを作成
                   </Button>
                 </form>
-                <Button
-                  variant="outline"
-                  width="full"
-                  mt={4}
-                  onClick={guestLogin}
-                >
-                  Guest Login
+                <Button width="full" mt={5} onClick={guestLogin}>
+                  ゲストユーザーでログイン
                 </Button>
               </Box>
             </Box>
@@ -160,12 +160,12 @@ const AuthProvider: React.FC = () => {
           <Flex width="full" align="center" justifyContent="center">
             <Box p={2}>
               <Box textAlign="center" m={10}>
-                <Heading>Signin</Heading>
+                <Heading fontSize="2xl">アカウントの作成</Heading>
               </Box>
               <Box my={4} textAlign="left">
                 <form>
                   <FormControl>
-                    <FormLabel>User Name</FormLabel>
+                    <FormLabel fontSize="sm">アカウント名</FormLabel>
                     <Input
                       type="name"
                       placeholder="username"
@@ -174,8 +174,8 @@ const AuthProvider: React.FC = () => {
                       }
                     />
                   </FormControl>
-                  <FormControl>
-                    <FormLabel>Email</FormLabel>
+                  <FormControl mt={5}>
+                    <FormLabel fontSize="sm">メールアドレス</FormLabel>
                     <Input
                       type="email"
                       placeholder="test@test.com"
@@ -184,8 +184,8 @@ const AuthProvider: React.FC = () => {
                       }
                     />
                   </FormControl>
-                  <FormControl mt={6}>
-                    <FormLabel>Password</FormLabel>
+                  <FormControl mt={5}>
+                    <FormLabel fontSize="sm">パスワード</FormLabel>
                     <Input
                       type="password"
                       placeholder="*******"
@@ -197,10 +197,12 @@ const AuthProvider: React.FC = () => {
                   <Button
                     variant="outline"
                     width="full"
-                    mt={4}
+                    className={style.btn}
+                    color="white"
+                    mt={10}
                     onClick={signUpEmail}
                   >
-                    Signin
+                    作成
                   </Button>
                   <Button
                     variant="outline"
@@ -208,7 +210,7 @@ const AuthProvider: React.FC = () => {
                     mt={4}
                     onClick={() => setIslogin(true)}
                   >
-                    Login
+                    ログインへ戻る
                   </Button>
                 </form>
               </Box>

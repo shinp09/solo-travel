@@ -1,10 +1,17 @@
 .container {
   background-color: #ffffff;
   width: 50vh;
-  height: 70vh;
+  height: 65vh;
+  padding: 2.5em;
   text-align: center;
-  vertical-align: middle;
   .createAcount {
     transition: 0.5;
+  }
+  .btn {
+    background-color: #ff385c;
+    &:hover {
+      background-color: #ff385c;
+      opacity: 0.6;
+    }
   }
 }
