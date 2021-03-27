@@ -8,6 +8,7 @@ import {
   EditPlanIdContext,
   UserContext,
 } from "./ContextProvider";
+import firebase from "firebase/app";
 
 const Card: React.FC = () => {
   const [plans, setPlans] = useState([
@@ -22,11 +23,15 @@ const Card: React.FC = () => {
   ]);
   const { mainModalState } = useContext(MainModalContext);
   const { editPlanIdState } = useContext(EditPlanIdContext);
-  const { user, logoutUserState } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
+  // ログインユーザーが作成したプランを取得、表示
   useEffect(() => {
-    if (user.userName)
-      db.collection("plan").onSnapshot((snapshot) => {
+    const loginUserData = firebase.auth().currentUser;
+    const getPlan = db
+      .collection("plan")
+      .where("uid", "==", loginUserData?.uid)
+      .onSnapshot((snapshot) => {
         setPlans(
           snapshot.docs.map((doc) => ({
             userName: doc.data().userName,
@@ -38,6 +43,9 @@ const Card: React.FC = () => {
           }))
         );
       });
+    return () => {
+      getPlan();
+    };
   }, [user]);
 
   const modalOpen = (id: string) => {

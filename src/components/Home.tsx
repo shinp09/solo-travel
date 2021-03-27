@@ -38,11 +38,12 @@ const Home: React.FC = (): JSX.Element => {
 
   // userの情報がなかった時はAuthに遷移
   // unmount時の処理を追加
-  // useEffect(() => {
-  //   if (user.email === "") {
-  //     history.push(`/Auth`);
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (user.email === "") {
+      history.push("/Auth");
+      alert("ログアウトしました");
+    }
+  }, [user]);
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
@@ -73,8 +74,10 @@ const Home: React.FC = (): JSX.Element => {
             .child(fileName)
             .getDownloadURL()
             .then(async (url) => {
+              const loginUserData = firebase.auth().currentUser;
               await db.collection("plan").add({
                 userName: user.userName,
+                uid: loginUserData?.uid,
                 title: posts.title,
                 image: url,
                 contents: posts.contents,
@@ -109,7 +112,7 @@ const Home: React.FC = (): JSX.Element => {
     <div className={style.container}>
       {user ? (
         <div>
-          <h2>ログイン中 : {user.userName}</h2>
+          <h2>ログイン中 : {user.email}</h2>
           <h2 onClick={logoutUserState}>ログアウト</h2>
         </div>
       ) : (

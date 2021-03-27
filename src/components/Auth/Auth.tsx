@@ -1,6 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import firebase from "firebase/app";
-import { auth, provider, db, storage } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { useHistory } from "react-router-dom";
 import style from "./Auth.module.scss";
 import { UserContext } from "../ContextProvider";
@@ -27,22 +27,26 @@ const AuthProvider: React.FC = () => {
   const history = useHistory();
 
   // Emailでloginするための関数
-  // データが取得できていない
   const loginEmail = async () => {
     await auth.signInWithEmailAndPassword(email, password);
-    await db.collection("user").doc("fkK3xbI4x5QfYHFp72Zg").get();
-    console.log(test);
-    // history.push(`/`);
+    const user = firebase.auth().currentUser;
+    db.collection("user").doc(user?.uid).set({
+      userName: userName,
+      email: email,
+    });
+    loginUserState(userName, email);
+    history.push(`/`);
   };
 
   // バリデーションの強化
   const signUpEmail = async () => {
     await auth.createUserWithEmailAndPassword(email, password);
-    db.collection("user").add({
+    db.collection("user").doc("test").set({
       userName: userName,
       email: email,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
+    loginUserState(userName, email);
     setIslogin(true);
     setCreateUser(true);
   };
