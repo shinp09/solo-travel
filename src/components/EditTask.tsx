@@ -13,7 +13,8 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
+import firebase from "firebase/app";
 import {
   SubModalContext,
   DeleteDialogContext,
@@ -43,19 +44,54 @@ const EditTask: React.FC<PROPS> = (props) => {
   }, [subModal]);
 
   // 既存タスクを更新
-  const editNewTask = () => {
+  // planIdが使われなくなったから、UIDを使う
+  const editNewTask = async () => {
+    const loginUserData = firebase.auth().currentUser;
     if (changeTask === "") {
       alert("変更内容を入力してください");
+    } else if (editTaskImg) {
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+        .map((n) => S[n % S.length])
+        .join("");
+      const fileName = randomChar + "_" + editTaskImg.name;
+      const uploadPlanImg = storage.ref(`images/${fileName}`).put(editTaskImg);
+      uploadPlanImg.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        () => {},
+        (err) => {
+          alert(err.message);
+        },
+        async () => {
+          await storage
+            // 画像URLを取得
+            .ref("images")
+            .child(fileName)
+            .getDownloadURL()
+            .then(async () => {
+              await db
+                .collection("plan")
+                .doc(loginUserData?.uid)
+                .collection("task")
+                .doc(props.task.id)
+                .update({ name: changeTask, image: editTaskImg });
+              onClose();
+              subModalState();
+              setEditForm(false);
+            });
+        }
+      );
     } else {
-      db.collection("plan")
-        .doc(editPlanId)
+      await db
+        .collection("plan")
+        .doc(loginUserData?.uid)
         .collection("task")
         .doc(props.task.id)
         .update({ name: changeTask });
-      onClose();
-      subModalState();
-      setEditForm(false);
     }
+    setChangeTask("");
   };
 
   // taskの削除
