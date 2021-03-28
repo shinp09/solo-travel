@@ -15,6 +15,7 @@ import {
   Button,
   Alert,
   AlertIcon,
+  Avatar,
 } from "@chakra-ui/react";
 
 const AuthProvider: React.FC = () => {
@@ -23,6 +24,7 @@ const AuthProvider: React.FC = () => {
   const [userName, setUserName] = useState("");
   const [isLogin, setIslogin] = useState(true);
   const [createUser, setCreateUser] = useState(false);
+  const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const { loginUserState } = useContext(UserContext);
   const history = useHistory();
 
@@ -86,6 +88,14 @@ const AuthProvider: React.FC = () => {
       loginUserState(userName, email);
       history.push(`/`);
     });
+  };
+
+  // Avatar画像を保存
+  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setAvatarImage(e.target.files[0]);
+      e.target.value = "";
+    }
   };
 
   return (
@@ -178,9 +188,37 @@ const AuthProvider: React.FC = () => {
                       }
                     />
                   </FormControl>
+
+                  {/* 画像の保存 START */}
+                  <label>
+                    <Box mt={5} textAlign="center">
+                      {avatarImage ? (
+                        <Avatar opacity="0.1" size="sm" />
+                      ) : (
+                        <>
+                          <Avatar
+                            size="sm"
+                            _hover={{
+                              cursor: "pointer",
+                              opacity: "0.6",
+                            }}
+                          />
+
+                          <Input
+                            type="file"
+                            onChange={onChangeImageHandler}
+                            d="none"
+                          />
+                        </>
+                      )}
+                    </Box>
+                  </label>
+                  {/* 画像の保存 END */}
+
                   <FormControl mt={5}>
                     <FormLabel fontSize="sm">メールアドレス</FormLabel>
                     <Input
+                      displey="none"
                       type="email"
                       placeholder="test@test.com"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
