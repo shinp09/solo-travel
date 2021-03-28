@@ -205,9 +205,14 @@ const TaskList: React.FC = () => {
                     </Button>
                     <DeleteDialog task={{ id: clickPlansTask.id }} />
                     <Button
-                      colorScheme="pink"
+                      background="#ff385c"
+                      color="white"
                       mr={4}
                       onClick={() => setChangeModal(false)}
+                      _hover={{
+                        background: "#ff385c",
+                        opacity: "0.6",
+                      }}
                     >
                       タスクを追加する
                     </Button>
@@ -235,9 +240,14 @@ const TaskList: React.FC = () => {
                   <ModalFooter>
                     <form>
                       <Button
-                        colorScheme="pink"
+                        color="white"
+                        background="#ff385c"
                         mr={4}
                         onClick={() => createTask()}
+                        _hover={{
+                          background: "#ff385c",
+                          opacity: "0.6",
+                        }}
                       >
                         保存
                       </Button>

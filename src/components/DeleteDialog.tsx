@@ -69,7 +69,13 @@ const DeleteDialog: React.FC<PROPS> = (props) => {
         <AlertDialogContent>
           <AlertDialogHeader>削除しますか?</AlertDialogHeader>
           <AlertDialogFooter>
-            <Button colorScheme="pink" ml={3} onClick={deletePlan} mr={4}>
+            <Button
+              color="white"
+              background="#ff385c"
+              ml={3}
+              onClick={deletePlan}
+              mr={4}
+            >
               削除
             </Button>
             <Button onClick={closeDialog}>キャンセル</Button>

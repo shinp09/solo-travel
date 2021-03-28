@@ -133,11 +133,15 @@ const AuthProvider: React.FC = () => {
                   </FormControl>
                   <Button
                     variant="outline"
-                    className={style.btn}
                     width="full"
                     color="white"
+                    background="#ff385c"
                     mt={10}
                     onClick={loginEmail}
+                    _hover={{
+                      background: "#ff385c",
+                      opacity: "0.6",
+                    }}
                   >
                     ログイン
                   </Button>
@@ -197,10 +201,14 @@ const AuthProvider: React.FC = () => {
                   <Button
                     variant="outline"
                     width="full"
-                    className={style.btn}
                     color="white"
+                    background="#ff385c"
                     mt={10}
                     onClick={signUpEmail}
+                    _hover={{
+                      background: "#ff385c",
+                      opacity: "0.6",
+                    }}
                   >
                     作成
                   </Button>

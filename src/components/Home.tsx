@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
 import firebase from "firebase/app";
+import Card from "./Card";
 import { db, storage } from "../firebase";
 import { UserContext } from "./ContextProvider";
 import defaultImg from "./assets/default-img.png";
@@ -19,8 +20,18 @@ import {
   FormLabel,
   Input,
   ModalFooter,
+  Box,
+  Text,
+  Avatar,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
 } from "@chakra-ui/react";
-import Card from "./Card";
 
 interface Contents {
   title: string | number;
@@ -101,23 +112,79 @@ const Home: React.FC = (): JSX.Element => {
   };
 
   return (
-    <div className={style.container}>
-      {user ? (
-        <div>
-          <h2>ログイン中 : {user.email}</h2>
-          <h2 onClick={logoutUserState}>ログアウト</h2>
-        </div>
-      ) : (
-        ""
-      )}
-      <h1>
-        Planding a <span>solo</span> trip
-      </h1>
-      <button className={style.btn} onClick={onOpen}>
-        プランを作成
-      </button>
-      <form onSubmit={sendPlan}>
-        <ChakraProvider>
+    <ChakraProvider>
+      <div className={style.container}>
+        {user ? (
+          <Popover>
+            <PopoverTrigger>
+              <Box w={200} background="#f7f7f7" borderRadius={50}>
+                <Box
+                  d="flex"
+                  p={3}
+                  _hover={{
+                    cursor: "pointer",
+                    opacity: "0.6",
+                  }}
+                  _focus={{
+                    outline: "none",
+                  }}
+                >
+                  <Avatar size="sm"></Avatar>
+                  <Text p={1} ml={3}>
+                    {user.email}
+                  </Text>
+                </Box>
+              </Box>
+            </PopoverTrigger>
+            <PopoverContent
+              mx={10}
+              w={100}
+              _focus={{
+                outline: "none",
+              }}
+            >
+              <PopoverArrow />
+              <PopoverBody
+                fontSize={14}
+                _hover={{
+                  cursor: "pointer",
+                  opacity: "0.6",
+                }}
+              >
+                ログアウト
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          ""
+        )}
+        <h1>
+          Planding a <span>solo</span> trip
+        </h1>
+        <Button
+          color="white"
+          background="#ff385c"
+          d="block"
+          outline="none"
+          my={5}
+          mx="auto"
+          w={200}
+          h={58}
+          borderRadius={50}
+          fontWeight={700}
+          fontSize={16}
+          _hover={{
+            background: "#ff385c",
+            opacity: "0.6",
+          }}
+          _focus={{
+            outline: "none",
+          }}
+          onClick={onOpen}
+        >
+          プランを作成
+        </Button>
+        <form onSubmit={sendPlan}>
           <Modal isOpen={isOpen} onClose={onClose} size="5xl">
             <ModalOverlay>
               <ModalContent>
@@ -147,13 +214,16 @@ const Home: React.FC = (): JSX.Element => {
                       }
                     />
                   </FormControl>
+                  <FormLabel mt={5}>画像</FormLabel>
+                  <Input type="file" onChange={onChangeImageHandler} />
                 </ModalBody>
                 <ModalFooter>
                   <Button mr={4}>
                     <VscDeviceCamera />
                   </Button>
                   <Button
-                    colorScheme="pink"
+                    color="white"
+                    background="#ff385c"
                     mr={4}
                     disabled={!posts}
                     onClick={sendPlan}
@@ -165,12 +235,12 @@ const Home: React.FC = (): JSX.Element => {
               </ModalContent>
             </ModalOverlay>
           </Modal>
-        </ChakraProvider>
-      </form>
-      <div className={style.wrapper}>
-        <Card />
+        </form>
+        <div className={style.wrapper}>
+          <Card />
+        </div>
       </div>
-    </div>
+    </ChakraProvider>
   );
 };
 

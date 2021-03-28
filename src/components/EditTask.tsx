@@ -158,7 +158,16 @@ const EditTask: React.FC<PROPS> = (props) => {
                       削除
                       <DeleteDialog />
                     </Button>
-                    <Button colorScheme="pink" mr={4} onClick={editNewTask}>
+                    <Button
+                      color="white"
+                      background="#ff385c"
+                      _hover={{
+                        background: "#ff385c",
+                        opacity: "0.6",
+                      }}
+                      mr={4}
+                      onClick={editNewTask}
+                    >
                       変更を保存
                     </Button>
                     <Button onClick={() => setEditForm(!editForm)}>戻る</Button>
@@ -166,7 +175,12 @@ const EditTask: React.FC<PROPS> = (props) => {
                 ) : (
                   <>
                     <Button
-                      colorScheme="pink"
+                      color="white"
+                      background="#ff385c"
+                      _hover={{
+                        background: "#ff385c",
+                        opacity: "0.6",
+                      }}
                       mr={4}
                       onClick={() => setEditForm(!editForm)}
                     >
