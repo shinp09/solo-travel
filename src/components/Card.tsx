@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import style from "./Card.module.scss";
 import { db } from "../firebase";
 import TaskList from "./TaskList";
+import { useHistory } from "react-router-dom";
 import { Box, Wrap, WrapItem, Image } from "@chakra-ui/react";
 import {
   MainModalContext,
@@ -24,28 +25,34 @@ const Card: React.FC = () => {
   const { mainModalState } = useContext(MainModalContext);
   const { editPlanIdState } = useContext(EditPlanIdContext);
   const { user } = useContext(UserContext);
+  const history = useHistory();
 
-  // ログインユーザーが作成したプランを取得、表示
+  // ログイン状態の監視・ユーザーが作成したプランを取得、表示
   useEffect(() => {
     const loginUserData = firebase.auth().currentUser;
-    const getPlan = db
-      .collection("plan")
-      .where("uid", "==", loginUserData?.uid)
-      .onSnapshot((snapshot) => {
-        setPlans(
-          snapshot.docs.map((doc) => ({
-            userName: doc.data().userName,
-            id: doc.id,
-            title: doc.data().title,
-            contents: doc.data().contents,
-            image: doc.data().image,
-            timestamp: doc.data().timestamp,
-          }))
-        );
-      });
-    return () => {
-      getPlan();
-    };
+    if (user.email === "") {
+      // alert("ログアウトしました");
+      history.push("/Auth");
+    } else {
+      const getPlan = db
+        .collection("plan")
+        .where("uid", "==", loginUserData?.uid)
+        .onSnapshot((snapshot) => {
+          setPlans(
+            snapshot.docs.map((doc) => ({
+              userName: doc.data().userName,
+              id: doc.id,
+              title: doc.data().title,
+              contents: doc.data().contents,
+              image: doc.data().image,
+              timestamp: doc.data().timestamp,
+            }))
+          );
+        });
+      return () => {
+        getPlan();
+      };
+    }
   }, [user]);
 
   const modalOpen = (id: string) => {

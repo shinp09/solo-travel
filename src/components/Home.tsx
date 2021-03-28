@@ -1,11 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
 import firebase from "firebase/app";
 import { db, storage } from "../firebase";
-import { useHistory } from "react-router-dom";
 import { UserContext } from "./ContextProvider";
 import defaultImg from "./assets/default-img.png";
+import { VscDeviceCamera } from "react-icons/vsc";
 import {
   Button,
   ChakraProvider,
@@ -35,16 +35,6 @@ const Home: React.FC = (): JSX.Element => {
   });
   const [planImage, setPlanImage] = useState<File | null>(null);
   const { user, logoutUserState } = useContext(UserContext);
-  const history = useHistory();
-
-  // userの情報がなかった時はAuthに遷移
-  // unmount時の処理を追加
-  useEffect(() => {
-    if (user.email === "") {
-      alert("ログアウトしました");
-      history.push("/Auth");
-    }
-  }, [user]);
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
@@ -146,7 +136,7 @@ const Home: React.FC = (): JSX.Element => {
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>概要</FormLabel>
+                    <FormLabel mt={5}>概要</FormLabel>
                     <Input
                       placeholder="旅行内容を入力"
                       onChange={(e) =>
@@ -157,11 +147,11 @@ const Home: React.FC = (): JSX.Element => {
                       }
                     />
                   </FormControl>
-                  <label>
-                    <input type="file" onChange={onChangeImageHandler} />
-                  </label>
                 </ModalBody>
                 <ModalFooter>
+                  <Button mr={4}>
+                    <VscDeviceCamera />
+                  </Button>
                   <Button
                     colorScheme="pink"
                     mr={4}
