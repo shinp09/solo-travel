@@ -26,11 +26,8 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton,
 } from "@chakra-ui/react";
 
 interface Contents {
@@ -46,6 +43,7 @@ const Home: React.FC = (): JSX.Element => {
   });
   const [planImage, setPlanImage] = useState<File | null>(null);
   const { user, logoutUserState } = useContext(UserContext);
+  const [userAvatar, setUserAvatar] = useState<File | null>(null);
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
@@ -129,7 +127,11 @@ const Home: React.FC = (): JSX.Element => {
                     outline: "none",
                   }}
                 >
-                  <Avatar size="sm"></Avatar>
+                  {userAvatar ? (
+                    <Avatar size="sm" src={defaultImg}></Avatar>
+                  ) : (
+                    <Avatar size="sm"></Avatar>
+                  )}
                   <Text p={1} ml={3}>
                     {user.email}
                   </Text>
@@ -150,6 +152,7 @@ const Home: React.FC = (): JSX.Element => {
                   cursor: "pointer",
                   opacity: "0.6",
                 }}
+                onClick={logoutUserState}
               >
                 ログアウト
               </PopoverBody>
