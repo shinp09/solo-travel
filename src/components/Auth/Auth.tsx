@@ -55,15 +55,17 @@ const AuthProvider: React.FC = () => {
 
   // バリデーションの強化
   const signUpEmail = async () => {
+    console.log(avatarImage);
     if (email === "" || password === "") {
       alert("メールアドレスまたはパスワードを入力してください");
     } else {
       await auth
         .createUserWithEmailAndPassword(email, password)
         .then(() => {
-          db.collection("user").doc("test").set({
+          db.collection("user").doc(userName).set({
             userName: userName,
             email: email,
+            avatar: avatarImage,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           });
         })
@@ -107,12 +109,12 @@ const AuthProvider: React.FC = () => {
             アカウントが作成されました！
           </Alert>
         )}
-        {createUser && (
+        {/* {createUser && (
           <Alert status="error" className={style.createAcount}>
             <AlertIcon />
             ログアウトされました！
           </Alert>
-        )}
+        )} */}
         {isLogin ? (
           <Flex width="full" align="center" justifyContent="center">
             <Box p={2}>
