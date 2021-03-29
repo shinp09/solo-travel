@@ -5,6 +5,7 @@ import firebase from "firebase/app";
 import { db, storage } from "../firebase";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "./ContextProvider";
+import defaultImg from "./assets/default-img.png";
 import {
   Button,
   ChakraProvider,
@@ -40,13 +41,14 @@ const Home: React.FC = (): JSX.Element => {
   // unmount時の処理を追加
   useEffect(() => {
     if (user.email === "") {
-      history.push("/Auth");
       alert("ログアウトしました");
+      history.push("/Auth");
     }
   }, [user]);
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
+    const loginUserData = firebase.auth().currentUser;
     // 画像がある場合storageに保存
     if (planImage) {
       const S =
@@ -74,7 +76,6 @@ const Home: React.FC = (): JSX.Element => {
             .child(fileName)
             .getDownloadURL()
             .then(async (url) => {
-              const loginUserData = firebase.auth().currentUser;
               await db.collection("plan").add({
                 userName: user.userName,
                 uid: loginUserData?.uid,
@@ -89,9 +90,10 @@ const Home: React.FC = (): JSX.Element => {
       // imageがない場合は、他情報のみDBに保存
     } else {
       db.collection("plan").add({
+        uid: loginUserData?.uid,
         userName: user.userName,
         title: posts.title,
-        image: "",
+        image: defaultImg,
         contents: posts.contents,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
