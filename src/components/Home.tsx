@@ -58,16 +58,12 @@ const Home: React.FC = (): JSX.Element => {
         .join("");
       const fileName = randomChar + "_" + planImage.name;
       const uploadPlanImg = storage.ref(`images/${fileName}`).put(planImage);
-      //   onを使い、storageに何らかの処理があった場合の後処理を記述
       uploadPlanImg.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
-        // uploadの進捗を管理
         () => {},
-        // errorのハンドリング
         (err) => {
           alert(err.message);
         },
-        // 正常終了した場合にstorageの画像URLを取得し、作成されたプランをDBに保存
         async () => {
           await storage
             // 画像URLを取得
@@ -86,7 +82,6 @@ const Home: React.FC = (): JSX.Element => {
             });
         }
       );
-      // imageがない場合は、他情報のみDBに保存
     } else {
       db.collection("plan").add({
         uid: loginUserData?.uid,
@@ -112,7 +107,7 @@ const Home: React.FC = (): JSX.Element => {
   return (
     <ChakraProvider>
       <div className={style.container}>
-        {user ? (
+        {user && (
           <Popover>
             <PopoverTrigger>
               <Box w={200} background="#f7f7f7" borderRadius={50}>
@@ -158,8 +153,6 @@ const Home: React.FC = (): JSX.Element => {
               </PopoverBody>
             </PopoverContent>
           </Popover>
-        ) : (
-          ""
         )}
         <h1>
           Planding a <span>solo</span> trip

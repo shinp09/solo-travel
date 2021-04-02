@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import firebase from "firebase/app";
-import { auth, db } from "../../firebase";
+import { auth, db, storage } from "../../firebase";
 import { useHistory } from "react-router-dom";
 import style from "./Auth.module.scss";
 import { UserContext } from "../ContextProvider";
@@ -17,6 +17,7 @@ import {
   AlertIcon,
   Avatar,
 } from "@chakra-ui/react";
+import { url } from "inspector";
 
 const AuthProvider: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -55,28 +56,65 @@ const AuthProvider: React.FC = () => {
 
   // バリデーションの強化
   const signUpEmail = async () => {
-    console.log(avatarImage);
+    // バリデーション
+    // 6桁の数字かつ2文字　|| 6文字+2数字ではなかった時にエラーを出す
     if (email === "" || password === "") {
       alert("メールアドレスまたはパスワードを入力してください");
     } else {
-      await auth
-        .createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          db.collection("user").doc(userName).set({
-            userName: userName,
-            email: email,
-            avatar: avatarImage,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-        })
-        .then(() => {
-          loginUserState(userName, email);
-          setIslogin(true);
-          setCreateUser(true);
-        })
-        .catch((err) => {
-          alert(err.message);
+      // 画像がある場合storageに保存
+      if (avatarImage) {
+        const S =
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const N = 16;
+        const randomChar = Array.from(
+          crypto.getRandomValues(new Uint32Array(N))
+        )
+          .map((n) => S[n % S.length])
+          .join("");
+        const fileName = randomChar + "_" + avatarImage.name;
+        const uploadPlanImg = storage
+          .ref(`images/${fileName}`)
+          .put(avatarImage);
+        uploadPlanImg.on(
+          firebase.storage.TaskEvent.STATE_CHANGED,
+          () => {},
+          (err) => {
+            alert(err.message);
+          },
+          // 正常終了した場合にstorageの画像URLを取得し、作成されたプランをDBに保存
+          async () => {
+            auth.createUserWithEmailAndPassword(email, password);
+            const loginUserData = firebase.auth().currentUser;
+            await storage
+              // 画像URLを取得
+              .ref("images")
+              .child(fileName)
+              .getDownloadURL()
+              .then(async (url) => {
+                await db.collection("user").doc(loginUserData?.uid).set({
+                  userName: userName,
+                  uid: loginUserData?.uid,
+                  avatarImage: url,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+                loginUserState(userName, email);
+                setIslogin(true);
+                setCreateUser(true);
+              });
+          }
+        );
+        // imageがない場合は、他情報のみDBに保存
+      } else {
+        const loginUserData = firebase.auth().currentUser;
+        db.collection("user").doc(loginUserData?.uid).set({
+          userName: userName,
+          uid: loginUserData?.uid,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         });
+        loginUserState(userName, email);
+        setIslogin(true);
+        setCreateUser(true);
+      }
     }
   };
 
@@ -96,7 +134,6 @@ const AuthProvider: React.FC = () => {
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setAvatarImage(e.target.files[0]);
-      e.target.value = "";
     }
   };
 
@@ -109,14 +146,8 @@ const AuthProvider: React.FC = () => {
             アカウントが作成されました！
           </Alert>
         )}
-        {/* {createUser && (
-          <Alert status="error" className={style.createAcount}>
-            <AlertIcon />
-            ログアウトされました！
-          </Alert>
-        )} */}
         {isLogin ? (
-          <Flex width="full" align="center" justifyContent="center">
+          <Flex justifyContent="center">
             <Box p={2}>
               <Box textAlign="center" m={10}>
                 <Heading fontSize="2xl">ログイン</Heading>
