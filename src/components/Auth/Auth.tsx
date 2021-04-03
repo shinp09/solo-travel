@@ -17,7 +17,6 @@ import {
   AlertIcon,
   Avatar,
 } from "@chakra-ui/react";
-import { url } from "inspector";
 
 const AuthProvider: React.FC = () => {
   const [email, setEmail] = useState("");

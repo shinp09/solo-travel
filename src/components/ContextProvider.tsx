@@ -28,6 +28,13 @@ export const UserContext = React.createContext({
   },
 });
 
+// export const UserAuthContext = React.createContext(
+//   {} as {
+//     state: any;
+//     dispatch: React.Dispatch<React.SetStateAction<any>>;
+//   }
+// );
+
 const ContextProvider: React.FC = (props) => {
   const [mainModal, setMainModal] = useState(false);
   const [subModal, setSubModal] = useState(false);

@@ -70,13 +70,13 @@ const EditTask: React.FC<PROPS> = (props) => {
             .ref("images")
             .child(fileName)
             .getDownloadURL()
-            .then(async () => {
+            .then(async (url) => {
               await db
                 .collection("plan")
-                .doc(loginUserData?.uid)
+                .doc(editPlanId)
                 .collection("task")
                 .doc(props.task.id)
-                .update({ name: changeTask, image: editTaskImg });
+                .update({ name: changeTask, image: url });
               onClose();
               subModalState();
               setEditForm(false);
@@ -86,10 +86,13 @@ const EditTask: React.FC<PROPS> = (props) => {
     } else {
       await db
         .collection("plan")
-        .doc(loginUserData?.uid)
+        .doc(editPlanId)
         .collection("task")
         .doc(props.task.id)
         .update({ name: changeTask });
+      onClose();
+      subModalState();
+      setEditForm(false);
     }
     setChangeTask("");
   };
