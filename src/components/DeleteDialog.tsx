@@ -75,6 +75,10 @@ const DeleteDialog: React.FC<PROPS> = (props) => {
               ml={3}
               onClick={deletePlan}
               mr={4}
+              _hover={{
+                background: "#ff385c",
+                opacity: "0.6",
+              }}
             >
               削除
             </Button>

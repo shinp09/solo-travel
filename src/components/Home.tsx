@@ -29,6 +29,7 @@ import {
   PopoverBody,
   PopoverArrow,
 } from "@chakra-ui/react";
+import { AttachmentIcon } from "@chakra-ui/icons";
 
 interface Contents {
   title: string | number;
@@ -210,18 +211,35 @@ const Home: React.FC = (): JSX.Element => {
                       }
                     />
                   </FormControl>
-                  <FormLabel mt={5}>画像</FormLabel>
-                  <Input type="file" onChange={onChangeImageHandler} />
                 </ModalBody>
                 <ModalFooter>
-                  <Button mr={4}>
-                    <VscDeviceCamera />
+                  <Button mr={4} colorScheme="telegram">
+                    {/* 画像の保存 START */}
+                    <label>
+                      <AttachmentIcon
+                        size="sm"
+                        _hover={{
+                          cursor: "pointer",
+                          opacity: "0.6",
+                        }}
+                      />
+
+                      <Input
+                        type="file"
+                        onChange={onChangeImageHandler}
+                        d="none"
+                      />
+                    </label>
+                    {/* 画像の保存 END */}
                   </Button>
                   <Button
                     color="white"
                     background="#ff385c"
+                    _hover={{
+                      background: "#ff385c",
+                      opacity: "0.6",
+                    }}
                     mr={4}
-                    disabled={!posts}
                     onClick={sendPlan}
                   >
                     保存
