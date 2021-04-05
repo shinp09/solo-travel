@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
 import firebase from "firebase/app";
@@ -6,7 +6,6 @@ import Card from "./Card";
 import { db, storage } from "../firebase";
 import { UserContext } from "./ContextProvider";
 import defaultImg from "./assets/default-img.png";
-import { VscDeviceCamera } from "react-icons/vsc";
 import {
   Button,
   ChakraProvider,
@@ -44,7 +43,24 @@ const Home: React.FC = (): JSX.Element => {
   });
   const [planImage, setPlanImage] = useState<File | null>(null);
   const { user, logoutUserState } = useContext(UserContext);
-  const [userAvatar, setUserAvatar] = useState<File | null>(null);
+  const [userAvatar, setUserAvatar] = useState<string | undefined>("");
+
+  useEffect(() => {
+    const loginUserData = firebase.auth().currentUser;
+    const docRef = db.collection("user").doc(loginUserData?.uid);
+    docRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setUserAvatar(doc.data()?.title);
+          console.log(userAvatar);
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting document:", error);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
@@ -126,7 +142,7 @@ const Home: React.FC = (): JSX.Element => {
                   {userAvatar ? (
                     <Avatar size="sm" src={defaultImg}></Avatar>
                   ) : (
-                    <Avatar size="sm"></Avatar>
+                    <Avatar size="sm" src={userAvatar}></Avatar>
                   )}
                   <Text p={1} ml={3}>
                     {user.email}

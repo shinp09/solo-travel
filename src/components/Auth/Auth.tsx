@@ -3,7 +3,7 @@ import firebase from "firebase/app";
 import { auth, db, storage } from "../../firebase";
 import { useHistory } from "react-router-dom";
 import style from "./Auth.module.scss";
-import { UserContext, UserAuthContext } from "../ContextProvider";
+import { UserContext } from "../ContextProvider";
 import {
   ChakraProvider,
   Flex,
@@ -26,7 +26,7 @@ const AuthProvider: React.FC = () => {
   const [createUser, setCreateUser] = useState(false);
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const { loginUserState } = useContext(UserContext);
-  const { dispatch } = useContext(UserAuthContext);
+  // const { dispatch } = useContext(UserAuthContext);
   const history = useHistory();
 
   // Emailでloginするための関数
