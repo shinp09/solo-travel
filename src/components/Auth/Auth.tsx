@@ -26,6 +26,7 @@ const AuthProvider: React.FC = () => {
   const [createUser, setCreateUser] = useState(false);
   const [avatarImage, setAvatarImage] = useState<File | null>(null);
   const { loginUserState } = useContext(UserContext);
+  // const { dispatch } = useContext(UserAuthContext);
   const history = useHistory();
 
   // Emailでloginするための関数

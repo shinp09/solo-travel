@@ -53,7 +53,8 @@ const Card: React.FC = () => {
         getPlan();
       };
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [history]);
 
   const modalOpen = (id: string) => {
     mainModalState();

@@ -7,7 +7,7 @@ export type ActionType = {
   payload: string;
 };
 
-export const UserAuthReducer = (state: StateType, action: ActionType) => {
+export const UserAuthReducer: any = (state: StateType, action: ActionType) => {
   switch (action.type) {
     case "setId":
       return {

@@ -6,7 +6,6 @@ import Card from "./Card";
 import { db, storage } from "../firebase";
 import { UserContext } from "./ContextProvider";
 import defaultImg from "./assets/default-img.png";
-import { VscDeviceCamera } from "react-icons/vsc";
 import {
   Button,
   ChakraProvider,
@@ -29,6 +28,8 @@ import {
   PopoverBody,
   PopoverArrow,
 } from "@chakra-ui/react";
+import { AttachmentIcon } from "@chakra-ui/icons";
+import { useHistory } from "react-router-dom";
 
 interface Contents {
   title: string | number;
@@ -43,7 +44,13 @@ const Home: React.FC = (): JSX.Element => {
   });
   const [planImage, setPlanImage] = useState<File | null>(null);
   const { user, logoutUserState } = useContext(UserContext);
-  const [userAvatar, setUserAvatar] = useState<File | null>(null);
+  const [userAvatar, setUserAvatar] = useState<string | undefined>("");
+  const history = useHistory();
+
+  const logoutUser = () => {
+    history.push("/Auth");
+    logoutUserState();
+  };
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
@@ -125,7 +132,7 @@ const Home: React.FC = (): JSX.Element => {
                   {userAvatar ? (
                     <Avatar size="sm" src={defaultImg}></Avatar>
                   ) : (
-                    <Avatar size="sm"></Avatar>
+                    <Avatar size="sm" src={userAvatar}></Avatar>
                   )}
                   <Text p={1} ml={3}>
                     {user.email}
@@ -147,7 +154,7 @@ const Home: React.FC = (): JSX.Element => {
                   cursor: "pointer",
                   opacity: "0.6",
                 }}
-                onClick={logoutUserState}
+                onClick={logoutUser}
               >
                 ログアウト
               </PopoverBody>
@@ -210,18 +217,35 @@ const Home: React.FC = (): JSX.Element => {
                       }
                     />
                   </FormControl>
-                  <FormLabel mt={5}>画像</FormLabel>
-                  <Input type="file" onChange={onChangeImageHandler} />
                 </ModalBody>
                 <ModalFooter>
-                  <Button mr={4}>
-                    <VscDeviceCamera />
+                  <Button mr={4} colorScheme="telegram">
+                    {/* 画像の保存 START */}
+                    <label>
+                      <AttachmentIcon
+                        size="sm"
+                        _hover={{
+                          cursor: "pointer",
+                          opacity: "0.6",
+                        }}
+                      />
+
+                      <Input
+                        type="file"
+                        onChange={onChangeImageHandler}
+                        d="none"
+                      />
+                    </label>
+                    {/* 画像の保存 END */}
                   </Button>
                   <Button
                     color="white"
                     background="#ff385c"
+                    _hover={{
+                      background: "#ff385c",
+                      opacity: "0.6",
+                    }}
                     mr={4}
-                    disabled={!posts}
                     onClick={sendPlan}
                   >
                     保存

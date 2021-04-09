@@ -28,13 +28,6 @@ export const UserContext = React.createContext({
   },
 });
 
-// export const UserAuthContext = React.createContext(
-//   {} as {
-//     state: any;
-//     dispatch: React.Dispatch<React.SetStateAction<any>>;
-//   }
-// );
-
 const ContextProvider: React.FC = (props) => {
   const [mainModal, setMainModal] = useState(false);
   const [subModal, setSubModal] = useState(false);
@@ -77,23 +70,23 @@ const ContextProvider: React.FC = (props) => {
   };
 
   return (
-    <>
-      <MainModalContext.Provider value={{ mainModalState, mainModal }}>
-        <SubModalContext.Provider value={{ subModalState, subModal }}>
-          <DeleteDialogContext.Provider
-            value={{ deleteDialogState, deleteDialog }}
-          >
-            <EditPlanIdContext.Provider value={{ editPlanIdState, editPlanId }}>
-              <UserContext.Provider
-                value={{ loginUserState, user, logoutUserState }}
-              >
-                {props.children}
-              </UserContext.Provider>
-            </EditPlanIdContext.Provider>
-          </DeleteDialogContext.Provider>
-        </SubModalContext.Provider>
-      </MainModalContext.Provider>
-    </>
+    <MainModalContext.Provider value={{ mainModalState, mainModal }}>
+      <SubModalContext.Provider value={{ subModalState, subModal }}>
+        <DeleteDialogContext.Provider
+          value={{ deleteDialogState, deleteDialog }}
+        >
+          <EditPlanIdContext.Provider value={{ editPlanIdState, editPlanId }}>
+            <UserContext.Provider
+              value={{ loginUserState, user, logoutUserState }}
+            >
+              {/* <UserAuthContext.Provider value={{ state, dispatch }}> */}
+              {props.children}
+              {/* </UserAuthContext.Provider> */}
+            </UserContext.Provider>
+          </EditPlanIdContext.Provider>
+        </DeleteDialogContext.Provider>
+      </SubModalContext.Provider>
+    </MainModalContext.Provider>
   );
 };
 
