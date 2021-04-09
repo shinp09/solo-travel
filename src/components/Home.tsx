@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import style from "./Home.module.scss";
 import "firebase/firestore";
 import firebase from "firebase/app";
@@ -29,6 +29,7 @@ import {
   PopoverArrow,
 } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
+import { useHistory } from "react-router-dom";
 
 interface Contents {
   title: string | number;
@@ -44,23 +45,12 @@ const Home: React.FC = (): JSX.Element => {
   const [planImage, setPlanImage] = useState<File | null>(null);
   const { user, logoutUserState } = useContext(UserContext);
   const [userAvatar, setUserAvatar] = useState<string | undefined>("");
+  const history = useHistory();
 
-  useEffect(() => {
-    const loginUserData = firebase.auth().currentUser;
-    const docRef = db.collection("user").doc(loginUserData?.uid);
-    docRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          setUserAvatar(doc.data()?.title);
-          console.log(userAvatar);
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting document:", error);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  const logoutUser = () => {
+    history.push("/Auth");
+    logoutUserState();
+  };
 
   // 入力されたデータをfirebaseに保存
   const sendPlan = () => {
@@ -164,7 +154,7 @@ const Home: React.FC = (): JSX.Element => {
                   cursor: "pointer",
                   opacity: "0.6",
                 }}
-                onClick={logoutUserState}
+                onClick={logoutUser}
               >
                 ログアウト
               </PopoverBody>

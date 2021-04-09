@@ -21,6 +21,7 @@ import {
   EditPlanIdContext,
 } from "./ContextProvider";
 import DeleteDialog from "./DeleteDialog";
+import { AttachmentIcon } from "@chakra-ui/icons";
 
 interface PROPS {
   task: {
@@ -41,12 +42,12 @@ const EditTask: React.FC<PROPS> = (props) => {
 
   useEffect(() => {
     subModal ? onOpen() : onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subModal]);
 
   // 既存タスクを更新
   // planIdが使われなくなったから、UIDを使う
   const editNewTask = async () => {
-    const loginUserData = firebase.auth().currentUser;
     if (changeTask === "") {
       alert("変更内容を入力してください");
     } else if (editTaskImg) {
@@ -149,14 +150,31 @@ const EditTask: React.FC<PROPS> = (props) => {
                       placeholder="変更内容を入力してください"
                       onChange={(e) => setChangeTask(e.target.value)}
                     />
-                    {/* 画像の変更 */}
-                    <input type="file" onChange={onChangeImageHandler} />
                   </FormControl>
                 )}
               </ModalBody>
               <ModalFooter>
                 {editForm ? (
                   <>
+                    <Button mr={4} colorScheme="telegram">
+                      {/* 画像の保存 START */}
+                      <label>
+                        <AttachmentIcon
+                          size="sm"
+                          _hover={{
+                            cursor: "pointer",
+                            opacity: "0.6",
+                          }}
+                        />
+
+                        <Input
+                          type="file"
+                          onChange={onChangeImageHandler}
+                          d="none"
+                        />
+                      </label>
+                      {/* 画像の保存 END */}
+                    </Button>
                     <Button mr={4} onClick={deleteDialogStateChange}>
                       削除
                       <DeleteDialog />

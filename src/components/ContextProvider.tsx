@@ -1,6 +1,4 @@
-import React, { useState, useReducer } from "react";
-import { UserAuthReducer, initialState } from "./Auth/UserAuthReducer";
-import { render } from "@testing-library/react";
+import React, { useState } from "react";
 
 export const MainModalContext = React.createContext({
   mainModalState: () => {},
@@ -30,13 +28,6 @@ export const UserContext = React.createContext({
   },
 });
 
-// export const UserAuthContext = React.createContext(
-//   {} as {
-//     state: any;
-//     dispatch: React.Dispatch<React.SetStateAction<any>>;
-//   }
-// );
-
 const ContextProvider: React.FC = (props) => {
   const [mainModal, setMainModal] = useState(false);
   const [subModal, setSubModal] = useState(false);
@@ -46,7 +37,6 @@ const ContextProvider: React.FC = (props) => {
     userName: "",
     email: "",
   });
-  // const [state, dispatch] = useReducer(UserAuthReducer, initialState);
 
   const mainModalState = () => {
     setMainModal(!mainModal);

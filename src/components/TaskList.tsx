@@ -26,6 +26,7 @@ import firebase from "firebase/app";
 import { db, storage } from "../firebase";
 import DeleteDialog from "./DeleteDialog";
 import defaultImg from "./assets/default-img.png";
+import { AttachmentIcon } from "@chakra-ui/icons";
 
 const TaskList: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -72,6 +73,7 @@ const TaskList: React.FC = () => {
       onClose();
       setGetPlansTask([{ id: "", tasksName: "", taskImg: "" }]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainModal]);
 
   // taskの新規作成・画像保存
@@ -233,12 +235,28 @@ const TaskList: React.FC = () => {
                         onChange={(e) => setTask(e.target.value)}
                       />
                     </FormControl>
-                    <label>
-                      <input type="file" onChange={onChangeImageHandler} />
-                    </label>
                   </ModalBody>
                   <ModalFooter>
                     <form>
+                      {/* 画像の保存 START */}
+                      <Button mr={4} colorScheme="telegram">
+                        <label>
+                          <AttachmentIcon
+                            size="sm"
+                            _hover={{
+                              cursor: "pointer",
+                              opacity: "0.6",
+                            }}
+                          />
+
+                          <Input
+                            type="file"
+                            onChange={onChangeImageHandler}
+                            d="none"
+                          />
+                        </label>
+                      </Button>
+                      {/* 画像の保存 END */}
                       <Button
                         color="white"
                         background="#ff385c"
