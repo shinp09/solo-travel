@@ -79,9 +79,7 @@ const ContextProvider: React.FC = (props) => {
             <UserContext.Provider
               value={{ loginUserState, user, logoutUserState }}
             >
-              {/* <UserAuthContext.Provider value={{ state, dispatch }}> */}
               {props.children}
-              {/* </UserAuthContext.Provider> */}
             </UserContext.Provider>
           </EditPlanIdContext.Provider>
         </DeleteDialogContext.Provider>
